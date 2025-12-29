@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   Animated,
 } from 'react-native';
-import Eye from '../../assets/svg/Eye.svg';
-import EyeClose from '../../assets/svg/EyeClose.svg';
-import {Colors} from '../../theme';
+import Eye from '@/assets/svg/Eye.svg';
+import EyeClose from '@/assets/svg/EyeClose.svg';
+import {Colors} from '@/theme';
 export interface Props {
   defaultval?: string;
   keyboard?: any;
@@ -48,7 +48,7 @@ const TextInputComponent = (props: Props) => {
       borderColor: props.errorMessage
         ? 'red'
         : activeBorder
-        ? Colors.green
+        ? Colors.blue
         : '#C4C4C4',
       borderWidth: props.errorMessage ? 1.5 : activeBorder ? 1.5 : 1,
     }),
@@ -128,7 +128,7 @@ const TextInputComponent = (props: Props) => {
             secureTextEntry={!props.showPass}
           />
           {props.rightIcon && (
-            <TouchableOpacity onPress={props.handlePasswordIconClick}>
+            <TouchableOpacity onPress={props.handlePasswordIconClick} style={styles.rightIcon}>
               {props.showPass ? <Eye /> : <EyeClose />}
             </TouchableOpacity>
           )}
@@ -175,7 +175,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: '8%',
   },
-
+  rightIcon: {
+    marginLeft: 15,
+  },
 });
 
 export default React.memo(TextInputComponent);

@@ -1,4 +1,5 @@
 const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+const path = require('path');
 
 const defaultConfig = getDefaultConfig(__dirname);
 const {assetExts, sourceExts} = defaultConfig.resolver;
@@ -16,7 +17,12 @@ const config = {
   resolver: {
     assetExts: assetExts.filter((ext) => ext !== "svg"),
     sourceExts: [...sourceExts, "svg"],
+    // Allow imports like: import X from '@/...'
+    extraNodeModules: {
+      '@': path.resolve(__dirname, 'src'),
+    },
   },
+  watchFolders: [path.resolve(__dirname, 'src')],
 };
 
 module.exports = mergeConfig(defaultConfig, config);

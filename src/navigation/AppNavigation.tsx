@@ -8,8 +8,9 @@ import { SafeAreaProvider,SafeAreaView } from 'react-native-safe-area-context';
 import type {RootStackParamList} from './types';
 const NetInfo = require('@react-native-community/netinfo');
 
-import Splash from '../screen/Splash';
-import SignIn from '../screen/Auth/SignIn';
+import Splash from '@/screen/Splash';
+import SignIn from '@/screen/Auth/SignIn';
+import Tabs from '@/navigation/TabNavigation';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -44,6 +45,7 @@ export default function AppNavigation() {
           <Stack.Navigator screenOptions={{headerShown: false ,gestureEnabled: false}}>
             <Stack.Screen name="Splash" component={Splash}/>
             <Stack.Screen name="SignIn" component={SignIn}/>
+            <Stack.Screen name="Tabs" component={Tabs}/>
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

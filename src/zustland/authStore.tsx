@@ -1,39 +1,41 @@
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {create} from 'zustand';
-import {createJSONStorage, persist} from 'zustand/middleware';
 
-type Tokens = {
-  accessToken: string | null;
-  refreshToken: string | null;
-};
-
-type AuthState = Tokens & {
-  setTokens: (tokens: {accessToken: string; refreshToken: string}) => void;
+interface AuthState {
+  token: string;
+  setToken: (value: string) => void;
+  refreshToken: string;
+  setRefreshToken: (value: string) => void;
+  isLoggedIn: boolean;
+  setIsLoggedIn: (value: boolean) => void;
   clear: () => void;
-  getAccessToken: () => string | null;
-  getRefreshToken: () => string | null;
-};
+}
 
-export const useAuthStore = create<AuthState>()(
+const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
-      accessToken: null,
-      refreshToken: null,
-
-      setTokens: ({accessToken, refreshToken}) => set({accessToken, refreshToken}),
-      clear: () => set({accessToken: null, refreshToken: null}),
-
-      getAccessToken: () => get().accessToken,
-      getRefreshToken: () => get().refreshToken,
+    (set) => ({
+      token: '',
+      setToken: (value: string) => {
+        set({ token: value });
+      },
+      refreshToken:'',
+      setRefreshToken: (value: string) => {
+        set({ refreshToken: value });
+      },
+      clear: () => {
+        set({ token: '', refreshToken: '' });
+      },
+      isLoggedIn: false,
+      setIsLoggedIn: (value: boolean) => {
+        set({ isLoggedIn: value });
+      },
     }),
     {
-      name: 'auth.tokens',
+      name: 'auth-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: state => ({
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
-      }),
-    },
-  ),
+    }
+  )
 );
 
+export default useAuthStore;

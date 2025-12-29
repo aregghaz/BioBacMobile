@@ -1,8 +1,10 @@
 import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
-import {useAuthStore} from '../zustland/authStore';
+import {endpoints} from './endpoints';
+import useAuthStore from '@/zustland/authStore';
+// import {NEXT_PUBLIC_API_URL} from '@env';
 
 // ===== CONFIG (edit) =====
-const BASE_URL = 'https://example.com/api';
+const BASE_URL = 'https://api.kinomino.online/api/';
 const REFRESH_PATH = '/auth/refresh';
 const TIMEOUT_MS = 20000;
 
@@ -24,7 +26,7 @@ const refreshClient: AxiosInstance = axios.create({
 });
 
 async function refreshAccessToken(): Promise<string> {
-  const refreshToken = useAuthStore.getState().getRefreshToken();
+  const refreshToken = useAuthStore.getState().refreshToken;
   if (!refreshToken) {
     throw new Error('Missing refresh token');
   }
@@ -36,10 +38,8 @@ async function refreshAccessToken(): Promise<string> {
     throw new Error('Invalid refresh response');
   }
 
-  useAuthStore.getState().setTokens({
-    accessToken: tokens.accessToken,
-    refreshToken: tokens.refreshToken,
-  });
+  useAuthStore.getState().setToken(tokens.accessToken);
+  useAuthStore.getState().setRefreshToken(tokens.refreshToken);
 
   return tokens.accessToken;
 }
@@ -52,7 +52,7 @@ export const apiClient: AxiosInstance = axios.create({
 
 // ✅ Authorization دقیقا اینجا ست میشه (قبل از ارسال هر request)
 apiClient.interceptors.request.use(config => {
-  const accessToken = useAuthStore.getState().getAccessToken();
+  const accessToken = useAuthStore.getState().token;
 
   if (accessToken) {
     config.headers = config.headers ?? {};
@@ -70,6 +70,11 @@ apiClient.interceptors.response.use(
 
     const url = String(original?.url ?? '');
     const isRefreshCall = url.includes(REFRESH_PATH);
+    const isLoginCall = url.includes(endpoints.SignIn);
+
+    if (status === 401 && isLoginCall) {
+      throw err;
+    }
 
     if (status === 401 && original && !original._retry && !isRefreshCall) {
       original._retry = true;

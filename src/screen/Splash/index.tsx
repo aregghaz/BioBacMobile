@@ -1,13 +1,13 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {Colors} from '../../theme/Colors';
-import {FontFamily} from '../../theme';
-import useSplash from '../../hooks/useSplash';
+import {Colors} from '@/theme/Colors';
+import {FontFamily} from '@/theme';
+import useSplash from '@/hooks/useSplash';
 export default function Splash() {
   useSplash();
   return (
     <View style={styles.container}>
-      <Text style={[styles.text, {fontFamily: FontFamily.regular}]}>BioBack</Text>
+      <Text style={[styles.text, {fontFamily: FontFamily.regular}]}>BioBac</Text>
     </View>
   );
 }

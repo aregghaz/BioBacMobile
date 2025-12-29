@@ -1,19 +1,21 @@
-import { View, StyleSheet, ScrollView, Text ,} from 'react-native';
+import {View, StyleSheet, ScrollView, Text} from 'react-native';
 import React from 'react';
-import { Colors } from '../../theme/Colors';
-import { Controller } from 'react-hook-form';
-import TextInput from '../../component/input/TextInput';
-import Botton from '../../component/button';
-import useLogin from '../../hooks/Auth/useLogin';
-import { FontFamily, FontSizes } from '../../theme';
-import { deviceHeight } from '../../helper';
+import {Colors} from '@/theme/Colors';
+import {Controller} from 'react-hook-form';
+import TextInput from '@/component/input/TextInput';
+import Botton from '@/component/button';
+import useSignIn from '@/hooks/useAuth/useSignIn';
+import {FontFamily, FontSizes} from '@/theme';
+import {deviceHeight} from '@/helper';
+import useExitAppOnBack from '@/component/exitapp';
 export default function Login() {
-  const { control, handleSubmit, errors, onSubmit, loading, showPass } =
-    useLogin();
+  useExitAppOnBack();
+  const { control, handleSubmit, errors, onSubmit, loading, showPass, toggleShowPass } =
+    useSignIn();
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-      <Text style={[styles.headerTitle,{fontFamily: FontFamily.semiBold}]}>BioBack</Text>
+      <Text style={[styles.headerTitle,{fontFamily: FontFamily.semiBold}]}>BioBac</Text>
         <Text style={[styles.title]}>Please enter your credentials to sign in!</Text>
         <View style={styles.inputContainerSmallMargin}>
           <Controller
@@ -42,7 +44,8 @@ export default function Login() {
                 containerStyle={styles.inputContainerSmallMargin}
                 onBlur={onBlur}
                 placeholder={'Password'}
-                handlePasswordIconClick={() => console.log(!showPass)}
+                rightIcon
+                handlePasswordIconClick={toggleShowPass}
                 onChangeText={onChange}
                 value={value}
                 errorMessage={errors.password?.message}
