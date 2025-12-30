@@ -1,36 +1,60 @@
 import {useCallback, useEffect, useState} from 'react';
-import { GetAllPermissions } from '@/services/Permissions/GetPermissions';
+import {GetProfileResponse} from '@/types';
+import {GetProfile} from '@/services/Profile';
+import useProfileStore from '@/zustland/profileStore';
+import {comparePermissions, orderGrouped} from '@/permissions/engine';
 import usePermissionStore from '@/zustland/permissionStore';
-import { GetAllPermissionsResponse } from '@/types';
+import { getGroupMeta } from '@/permissions/groupMeta';
 export default function useHome() {
-    const [loading, setLoading] = useState(false);
-    const {setPermissions,permissions} = usePermissionStore();
+  const [loading, setLoading] = useState(false);
+  const {setProfile} = useProfileStore();
+  const {permissions} = usePermissionStore();
+  const [groups, setGroups] = useState<any[]>([]);
 
- // get all permissions //
-  const getAllPermissions = useCallback(() => {
+  // get profile //
+  const getProfile = useCallback(() => {
     setLoading(true);
-    GetAllPermissions({
+    return GetProfile({
       onSuccess: res => {
-        const {data} = res as {data: GetAllPermissionsResponse[]};
-        setPermissions(data);
+        const {data} = res as {data: GetProfileResponse};
+        const result = comparePermissions({
+          fullPermissions: permissions,
+          userPermissions: data.permissions,
+        });
+        const groupsData = orderGrouped(result.grouped, ['BUYER', 'SELLER'], {
+          includeEmpty: true,
+        }).map(g => {
+          const enabled = g.items.filter(x => x.has).length;
+          const meta = getGroupMeta(g.key);
+          return {
+            key: g.key,
+            label: meta.label,
+            iconLibrary: meta.icon.library,
+            iconName: meta.icon.name,
+            enabled,
+            total: g.items.length,
+            iconSize: meta.icon.size,
+          };
+        });
+        setGroups(groupsData);
+        setProfile(data);
         setLoading(false);
       },
-      onError: () => {setLoading(false)}
+      onError: () => {
+        setLoading(false);
+      },
     });
-  }, [setPermissions]);
+  }, [setProfile, permissions]);
 
- const getProfile = useCallback(() => {
-    return permissions;
- }, []);
 
   useEffect(() => {
-    if (!permissions.length) {
-        getAllPermissions();
-    }
-  }, [permissions.length, getAllPermissions]);
+    getProfile();
+  }, [getProfile]);
 
-return{
+
+
+  return {
     loading,
-};
-
+    groups,
+  };
 }

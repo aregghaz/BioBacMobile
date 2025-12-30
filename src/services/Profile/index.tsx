@@ -4,7 +4,7 @@ import {endpoints} from '@/api/endpoints';
 export type SignInCallbacks<T> = StatusCallbacks<T>;
 export type SignInResult<T> = StatusResult<T>;
 
-export const GetAllPermissions = async <T extends object>(
+export const GetProfile = async <T extends object>(
 
   result: SignInCallbacks<T> = {},
 ): Promise<SignInResult<T>> => {

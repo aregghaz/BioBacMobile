@@ -6,14 +6,17 @@ import {useNavigation} from '@react-navigation/native';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 import {signInService} from '../../services/AuthService/SingIn';
-import {LoginForm} from '@/types';
+import {GetAllPermissionsResponse, LoginForm} from '@/types';
 import {useToast} from '@/component/toast/ToastProvider';
 import type {RootStackParamList} from '@/navigation/types';
 import useAuthStore from '@/zustland/authStore';
+import { GetAllPermissions } from '@/services/Permissions/GetPermissions';
+import usePermissionStore from '@/zustland/permissionStore';
 
 export default function useSignIn() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const{setToken,setRefreshToken,setIsLoggedIn} = useAuthStore();
+  const {setPermissions} = usePermissionStore();
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const {show} = useToast();
@@ -36,6 +39,33 @@ export default function useSignIn() {
     resolver: yupResolver(validationSchema),
   });
 
+
+
+ // toggle show password //
+ const toggleShowPass = useCallback(() => {
+  setShowPass(v => !v);
+ }, []);
+
+
+ // get all permissions //
+ const getAllPermissions = useCallback(async () => {
+  setLoading(true);
+ await GetAllPermissions({
+    onSuccess: res => {
+      const {data} = res as {data: GetAllPermissionsResponse[]};
+      setPermissions(data);
+      setIsLoggedIn(true);
+      setLoading(false);
+      reset();
+      navigation.reset({index: 0, routes: [{name: 'Tabs'}]});
+    },
+    onError: () => {
+      setLoading(false);
+    },
+  });
+}, [setPermissions, navigation, reset, setIsLoggedIn]);
+
+
   //---------onSubmit to api---------//
   const onSubmit = useCallback(
     async (values: LoginForm) => {
@@ -50,13 +80,10 @@ export default function useSignIn() {
             setLoading(false);
             return;
           }
-
-          setIsLoggedIn(true);
           setToken(accessToken);
           setRefreshToken(refreshToken);
-          setLoading(false);
-          reset();
-          navigation.reset({index: 0, routes: [{name: 'Tabs'}]});
+          getAllPermissions();
+
         },
         onUnauthorized: data => {
           setLoading(false);
@@ -68,14 +95,8 @@ export default function useSignIn() {
         },
       });
     },
-    [show, setToken, setRefreshToken, reset, navigation,setIsLoggedIn],
+    [show, setToken, setRefreshToken, getAllPermissions],
   );
-
- // toggle show password //
- const toggleShowPass = useCallback(() => {
-  setShowPass(v => !v);
- }, []);
-
 
   return {
     loading,

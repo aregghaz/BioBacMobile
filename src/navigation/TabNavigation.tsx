@@ -84,7 +84,7 @@ export default function TabNavigation() {
       initialRouteName="Home"
       screenOptions={screenOptions}>
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Settings" component={Settings} />
+      {/* <Tab.Screen name="Settings" component={Settings} /> */}
     </Tab.Navigator>
   );
 }

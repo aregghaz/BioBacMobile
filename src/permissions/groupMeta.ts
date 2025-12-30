@@ -1,0 +1,52 @@
+export type IconLibrary = 'AntDesign' | 'Ionicons' | 'MaterialIcons' | 'Feather';
+
+export type GroupMeta = {
+  key: string;
+  label: string;
+  icon: {
+    library: IconLibrary;
+    name: string;
+    size?: number;
+  };
+};
+
+const DEFAULT_META: GroupMeta = {
+  key: 'OTHER',
+  label: 'Other',
+  icon: {library: 'AntDesign', name: 'appstore-o',size: 35},
+};
+
+/**
+ * Map group key -> UI meta (label + icon).
+ * You can freely change icons/order without touching the permission engine.
+ */
+export const PERMISSION_GROUP_META: Readonly<Record<string, GroupMeta>> = {
+  BUYER: {key: 'BUYER', label: 'Buyers', icon: {library: 'MaterialIcons', name: 'apartment',size: 40}},
+  SELLER: {key: 'SELLER', label: 'Sellers', icon: {library: 'Feather', name: 'tag',size: 40}},
+  COMPANY: {key: 'COMPANY', label: 'Company', icon: {library: 'MaterialIcons', name: 'business',size: 40}},
+  USER: {key: 'USER', label: 'User', icon: {library: 'AntDesign', name: 'user',size: 40}},
+  OTHER: DEFAULT_META,
+};
+
+export function getGroupMeta(
+  groupKey: string,
+  overrides?: Partial<Record<string, Partial<GroupMeta>>>,
+): GroupMeta {
+  const key = String(groupKey ?? '').trim().toUpperCase();
+  const base =
+    PERMISSION_GROUP_META[key] ?? {...DEFAULT_META, key, label: key || DEFAULT_META.label};
+  const o = overrides?.[key];
+  if (!o) {
+    return base;
+  }
+  return {
+    ...base,
+    ...o,
+    icon: {
+      ...base.icon,
+      ...(o.icon ?? {}),
+    },
+  };
+}
+
+
