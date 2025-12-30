@@ -5,8 +5,13 @@ import useProfileStore from '@/zustland/profileStore';
 import {comparePermissions, orderGrouped} from '@/permissions/engine';
 import usePermissionStore from '@/zustland/permissionStore';
 import { getGroupMeta } from '@/permissions/groupMeta';
+import { HomeListProps } from '@/types';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@/navigation/types';
 export default function useHome() {
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {setProfile} = useProfileStore();
   const {permissions} = usePermissionStore();
   const [groups, setGroups] = useState<any[]>([]);
@@ -34,6 +39,7 @@ export default function useHome() {
             enabled,
             total: g.items.length,
             iconSize: meta.icon.size,
+            items: g.items, // <-- permissions
           };
         });
         setGroups(groupsData);
@@ -46,6 +52,17 @@ export default function useHome() {
     });
   }, [setProfile, permissions]);
 
+ // navigate to detail //
+ const navigateToDetail = useCallback((item: HomeListProps) => {
+  switch (item.key) {
+    case 'BUYER':
+      navigation.navigate('Buyers', {item});
+      break;
+    case 'SELLER':
+      navigation.navigate('Seller', {item});
+      break;
+  }
+ }, [navigation]);
 
   useEffect(() => {
     getProfile();
@@ -56,5 +73,6 @@ export default function useHome() {
   return {
     loading,
     groups,
+    navigateToDetail,
   };
 }

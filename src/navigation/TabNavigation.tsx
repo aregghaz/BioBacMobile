@@ -1,23 +1,36 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import type {BottomTabBarButtonProps} from '@react-navigation/bottom-tabs';
-import {Pressable} from 'react-native';
+import {Platform, Pressable} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import type {TabParamList} from './types';
+import type {RootStackParamList, TabParamList} from './types';
+//-------------Home----------------
 import Home from '@/screen/Home';
-import Settings from '@/screen/Settings';
+import Buyers from '@/screen/Buyers';
+import Seller from '@/screen/Seller';
+import { deviceHeight } from '@/helper';
+import { FontFamily } from '@/theme';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+
+
 
 const Tab = createBottomTabNavigator<TabParamList>();
+const HomeStack = createNativeStackNavigator<RootStackParamList>();
 
 const baseScreenOptions = {
   headerShown: false,
   lazy: true,
-  tabBarShowLabel: true,
+  tabBarShowLabel: false,
   tabBarStyle: {
-    height: 60,
-    paddingBottom: 6,
-    paddingTop: 6,
+    height: Platform.OS === 'android' ? deviceHeight * 0.06 : deviceHeight * 0.05,
+    paddingTop:Platform.OS === 'android' ? 6 : 10,
+  },
+  textStyle: {
+    fontSize: Platform.OS === 'android' ? 16 : 10,
+    fontWeight: 'bold',
+    fontFamily: FontFamily.regular,
   },
 } as const;
 
@@ -58,7 +71,7 @@ function TabBarIcon({
   focused: boolean;
 }) {
   const name =
-    routeName === 'Home'
+    routeName === 'HomeScreen'
       ? focused
         ? 'home'
         : 'home'
@@ -74,17 +87,25 @@ const screenOptions = ({route}: {route: {name: keyof TabParamList}}) => ({
     <NoFeedbackTabBarButton {...props} />
   ),
   tabBarIcon: (props: {color: string; size: number; focused: boolean}) => (
-    <TabBarIcon routeName={route.name} {...props} />
+    <TabBarIcon routeName={route.name} {...props} size={30}/>
   ),
 });
+
+const HomeStackScreen = () => {
+  return (
+    <HomeStack.Navigator screenOptions={{headerShown: false}}>
+      <HomeStack.Screen name="Home" component={Home} />
+      <HomeStack.Screen name="Buyers" component={Buyers} />
+      <HomeStack.Screen name="Seller" component={Seller} />
+    </HomeStack.Navigator>
+  );
+}
 
 export default function TabNavigation() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
       screenOptions={screenOptions}>
-      <Tab.Screen name="Home" component={Home} />
-      {/* <Tab.Screen name="Settings" component={Settings} /> */}
+      <Tab.Screen name="HomeScreen" component={HomeStackScreen} />
     </Tab.Navigator>
   );
 }

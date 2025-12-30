@@ -3,6 +3,7 @@ import React from 'react';
 import {Colors} from '@/theme/Colors';
 import {FontFamily} from '@/theme';
 import useSplash from '@/hooks/useSplash';
+import { deviceHeight } from '@/helper/Dimensions';
 export default function Splash() {
   useSplash();
   return (
@@ -15,12 +16,12 @@ export default function Splash() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Colors.background,
   },
   text: {
     fontSize:40,
     color: Colors.black,
+    marginTop: deviceHeight / 2.5,
   },
 });

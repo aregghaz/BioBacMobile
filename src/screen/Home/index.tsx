@@ -5,14 +5,14 @@ import VerticalFlatList from '@/component/list/VerticalFlatList';
 import useHome from '@/hooks/useHome';
 import HomeList from './_component/HomeList';
 import Activity from '@/component/ActivityIndicator';
+import {HomeListProps} from '@/types';
 
 export default function Home() {
-  const {groups, loading} = useHome();
-
+  const {groups, loading, navigateToDetail} = useHome();
   return (
     <View style={styles.container}>
       {loading ? (
-        <Activity/>
+        <Activity />
       ) : (
         <View style={styles.linstContainer}>
           <VerticalFlatList
@@ -21,7 +21,10 @@ export default function Home() {
             columns={2}
             keyExtractor={item => item.key}
             renderItem={({item}) => (
-              <HomeList item={item} onCallback={() => {}} />
+              <HomeList
+                item={item}
+                onCallback={item => navigateToDetail(item as HomeListProps)}
+              />
             )}
           />
         </View>

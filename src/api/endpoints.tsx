@@ -2,6 +2,8 @@ type Endpoints = {
   SignIn: string;
   GetAllPermissions: string;
   GetProfile: string;
+  GetBuyers: string;
+  GetSeller: string;
 }
 
 export const endpoints:Endpoints = {
@@ -12,4 +14,8 @@ export const endpoints:Endpoints = {
 
   // profile //
   GetProfile: 'users/info/profile',
+
+  // company //
+  GetBuyers: 'company/buyer',
+  GetSeller: 'company/seller',
 };

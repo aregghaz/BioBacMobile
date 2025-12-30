@@ -3,14 +3,17 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {StatusBar, View, Text} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {Platform, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import { SafeAreaProvider,SafeAreaView } from 'react-native-safe-area-context';
 import type {RootStackParamList} from './types';
 const NetInfo = require('@react-native-community/netinfo');
 
 import Splash from '@/screen/Splash';
+//-------------Auth----------------
 import SignIn from '@/screen/Auth/SignIn';
+
 import Tabs from '@/navigation/TabNavigation';
+import { Colors } from '@/theme/Colors';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -38,8 +41,8 @@ export default function AppNavigation() {
     <SafeAreaProvider>
       <SafeAreaView
         style={styles.container}
-        edges={Platform.OS === 'android' ? ['bottom', 'top'] : ['top']}>
-        <StatusBar barStyle="light-content" />
+        >
+        <StatusBar barStyle="dark-content" />
         {isConnected === false && <OfflineBanner />}
         <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown: false ,gestureEnabled: false}}>
@@ -56,6 +59,7 @@ export default function AppNavigation() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor:Colors.white
   },
 });
 
