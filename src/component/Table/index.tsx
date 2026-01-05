@@ -1,44 +1,56 @@
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React from 'react';
 import {Colors, Shadows} from '@/theme';
 import Button from '@/component/button';
 import DeleteIcon from 'react-native-vector-icons/Ionicons';
 import EditIcon from '@/component/icons/EditIcon';
-
+import { Permission } from '@/permissions/engine';
+import { hasPermission } from '@/permissions/hasPermission';
+import { MaterialIcons } from '../icons/VectorIcon';
 
 type Props = {
   onClickEdit: () => void;
   onClickDelete: () => void;
   children: React.ReactNode;
+  containerStyle?: ViewStyle;
+  permission?: Permission[];
 };
 
-export default function Table({onClickEdit, onClickDelete, children}: Props) {
+enum UserPermission {
+  CREATE = 'COMPANY_SELLER_CREATE',
+  UPDATE = 'COMPANY_SELLER_UPDATE',
+  DELETE = 'COMPANY_SELLER_DELETE',
+}
+
+export default function Table({onClickEdit, onClickDelete, children, containerStyle, permission}: Props) {
+  const canEdit = hasPermission(permission, UserPermission.UPDATE);
+  const canDelete = hasPermission(permission, UserPermission.DELETE);
+  const canCreate = hasPermission(permission, UserPermission.CREATE);
   return (
-    <View style={styles.container}>
-      <View style={styles.contentContainer}>
+      <View style={[styles.contentContainer, containerStyle]}>
         <View style={styles.invoiceContainer}>
-          <TouchableOpacity activeOpacity={0.8} onPress={onClickEdit}>
+          <TouchableOpacity activeOpacity={0.8} onPress={() => console.log()}>
+          <MaterialIcons name="history" size={24} color={Colors.black} />
+          </TouchableOpacity>
+           {canEdit && <TouchableOpacity activeOpacity={0.8} onPress={onClickEdit}>
             <EditIcon size={24} />
-          </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.8} onPress={onClickDelete}>
+          </TouchableOpacity>}
+          {canDelete && <TouchableOpacity activeOpacity={0.8} onPress={onClickDelete}>
             <DeleteIcon name="trash-outline" size={24} color={Colors.red} />
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
         {children}
-        <Button
+        {canCreate && <Button
           title="Create"
           onHandler={() => console.log()}
           style={styles.button}
         />
+        }
       </View>
-    </View>
   );
 }
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
+
   contentContainer: {
     width: '93%',
     backgroundColor: Colors.white,

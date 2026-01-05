@@ -23,10 +23,10 @@ export async function requestWithStatus<TResponse extends object>(
 ): Promise<StatusResult<TResponse>> {
   const client = args.client ?? apiClient;
   const callbacks = args.callbacks ?? {};
+  // console.log('requestWithStatus',args.config);
 
   try {
     const res = await client.request<TResponse>(args.config);
-
     if (res.status === 200) {
       callbacks.onSuccess?.(res.data, res);
       return {ok: true, status: 200, data: res.data, res};
@@ -41,6 +41,7 @@ export async function requestWithStatus<TResponse extends object>(
     if (status === 401) {
       const data = axios.isAxiosError(err) ? err.response?.data : undefined;
       callbacks.onUnauthorized?.(data, err);
+      console.log('Unauthorized',data);
       return {ok: false, status: 401, error: err, data};
     }
 

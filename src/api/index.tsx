@@ -4,7 +4,8 @@ import useAuthStore from '@/zustland/authStore';
 // import {NEXT_PUBLIC_API_URL} from '@env';
 
 // ===== CONFIG (edit) =====
-const BASE_URL = 'https://api.kinomino.online/api/';
+// const BASE_URL = 'https://api.kinomino.online/api/';
+const BASE_URL = 'http://kinomino.online/api/';
 const REFRESH_PATH = '/auth/refresh';
 const TIMEOUT_MS = 20000;
 

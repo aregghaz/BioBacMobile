@@ -31,6 +31,7 @@ type BaseProps<T> = Omit<
   edgePaddingPercent?: number;
   includeSafeAreaTop?: boolean;
   equalizeTopBottomPadding?: boolean;
+  onEndReached?: () => void;
 };
 
 type WithRenderItem<T> = BaseProps<T> & {
@@ -155,6 +156,8 @@ export default function VerticalFlatList<T>(props: VerticalFlatListProps<T>) {
       key={`columns-${columns}`}
       renderItem={renderItemWithSpacing as any}
       keyExtractor={keyExtractor as any}
+      onEndReached={props.onEndReached}
+      onEndReachedThreshold={0.5}
       contentContainerStyle={[
         {paddingTop, paddingBottom},
         props.contentContainerStyle,

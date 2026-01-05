@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {GetProfileResponse} from '@/types';
 import {GetProfile} from '@/services/Profile';
 import useProfileStore from '@/zustland/profileStore';
@@ -9,12 +9,29 @@ import { HomeListProps } from '@/types';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/types';
+import { refreshTokenService } from '@/services/AuthService/RefreshToken';
+import useAuthStore from '@/zustland/authStore';
+
 export default function useHome() {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {setProfile} = useProfileStore();
+  const {refreshToken} = useAuthStore();
   const {permissions} = usePermissionStore();
-  const [groups, setGroups] = useState<any[]>([]);
+  const [groups, setGroups] = useState<HomeListProps[]>([]);
+  const getProfileRef = useRef<() => void>(() => {});
+
+  // refresh token //
+  const onSubmitRefreshToken = useCallback(() => {
+    refreshTokenService(refreshToken, {
+      onSuccess: () => {
+        getProfileRef.current();
+      },
+      onError: () => {
+        setLoading(false);
+      },
+    });
+  }, [refreshToken]);
 
   // get profile //
   const getProfile = useCallback(() => {
@@ -42,15 +59,18 @@ export default function useHome() {
             items: g.items, // <-- permissions
           };
         });
-        setGroups(groupsData);
+        setGroups(groupsData as unknown as HomeListProps[]);
         setProfile(data);
         setLoading(false);
+      },
+      onUnauthorized: () => {
+        onSubmitRefreshToken();
       },
       onError: () => {
         setLoading(false);
       },
     });
-  }, [setProfile, permissions]);
+  }, [setProfile, permissions, onSubmitRefreshToken]);
 
  // navigate to detail //
  const navigateToDetail = useCallback((item: HomeListProps) => {
@@ -61,8 +81,17 @@ export default function useHome() {
     case 'SELLER':
       navigation.navigate('Seller', {item});
       break;
+      default:
+        console.warn(`Unknown home item key: ${item.key}`);
   }
  }, [navigation]);
+
+
+
+  useEffect(() => {
+    getProfileRef.current = getProfile;
+  }, [getProfile]);
+
 
   useEffect(() => {
     getProfile();

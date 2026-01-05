@@ -75,7 +75,6 @@ export default function useSignIn() {
         onSuccess: (data: any) => {
           const accessToken = data?.accessToken ?? data?.data?.accessToken;
           const refreshToken = data?.refreshToken ?? data?.data?.refreshToken;
-
           if (!accessToken || !refreshToken) {
             setLoading(false);
             return;

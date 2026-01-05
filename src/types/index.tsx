@@ -1,4 +1,6 @@
-export type LoginForm = {
+import type {Permission} from '@/permissions/engine';
+
+  export type LoginForm = {
     username: string;
     password: string;
   };
@@ -33,5 +35,62 @@ export type LoginForm = {
     enabled: boolean;
     total: number;
     icon: string;
-    item?:[]
+    items?: Permission[];
+  }
+
+
+  export type AllCompanyProps = {
+    actualAddress: string;
+    addressTT: string[];
+    advancePayment: boolean;
+    attributeGroupIds: number[];
+    ceo: string;
+    chainOfStore: string;
+    clientRegisteredDate: string;
+    clientType: {id: number, name: string};
+    companyGroup: {createdAt: string, updatedAt: string, id: number, name: string};
+    condition: {id: number, deliveryMethods: number[], deliveryPayerId: number, deliveryPayerName: string, financialTerms: number[], contractFormId: number, contractFormName: string, bonus: number | null};
+    contactPerson: {id: number, name: string}[];
+    cooperation: {id: number, name: string};
+    createdAt: string;
+    deleted: boolean;
+    detail: {id: number, inn: string, kpp: string, ogrn: string, okpo: string};
+    emails: string[];
+    externalEmails: string[];
+    externalPhones: string[];
+    id: number;
+    latitude: number | null;
+    lines : string[];
+    localAddress: string;
+    longitude: number | null;
+    name: string;
+    ogrnDate: string;
+    ourCompanies: {id: number, name: string}[];
+    phones: string[];
+    priceList: number | null;
+    region
+    : {id: number, name: string, code: string};
+    responsibleEmployeeId: number;
+    saleType: {id: number, name: string};
+    source: {id: number, name: string};
+    types: {id: number, name: string}[];
+    updatedAt: string;
+    warehouseAddress: string;
+    websites: string[];
+    creditorAmount: number;
+    debtorAmount: number;
+    balance: number;
+    metadata: {
+      page: number,
+      size: number,
+      totalElesments: number,
+      totalPages: number,
+      last: boolean,
+      filter: {
+        typeIds: {
+          operator: string,
+          value: number[],
+        },
+      },
+    },
   }
