@@ -23,6 +23,7 @@ export default function useHome() {
 
   // refresh token //
   const onSubmitRefreshToken = useCallback(() => {
+    console.log('onSubmitRefreshToken',refreshToken);
     refreshTokenService(refreshToken, {
       onSuccess: () => {
         getProfileRef.current();

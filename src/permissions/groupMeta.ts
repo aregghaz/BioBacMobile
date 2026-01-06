@@ -1,4 +1,4 @@
-export type IconLibrary = 'AntDesign' | 'Ionicons' | 'MaterialIcons' | 'Feather';
+export type IconLibrary = 'AntDesign' | 'Ionicons' | 'MaterialIcons' | 'Feather' | 'Svg';
 
 export type GroupMeta = {
   key: string;
@@ -13,7 +13,7 @@ export type GroupMeta = {
 const DEFAULT_META: GroupMeta = {
   key: 'OTHER',
   label: 'Other',
-  icon: {library: 'AntDesign', name: 'appstore-o',size: 35},
+  icon: {library: 'Svg', name: 'NotFound', size: 35},
 };
 
 /**
@@ -21,10 +21,10 @@ const DEFAULT_META: GroupMeta = {
  * You can freely change icons/order without touching the permission engine.
  */
 export const PERMISSION_GROUP_META: Readonly<Record<string, GroupMeta>> = {
-  BUYER: {key: 'BUYER', label: 'Buyers', icon: {library: 'MaterialIcons', name: 'apartment',size: 40}},
-  SELLER: {key: 'SELLER', label: 'Sellers', icon: {library: 'Feather', name: 'tag',size: 40}},
-  COMPANY: {key: 'COMPANY', label: 'Company', icon: {library: 'MaterialIcons', name: 'business',size: 40}},
-  USER: {key: 'USER', label: 'User', icon: {library: 'AntDesign', name: 'user',size: 40}},
+  BUYER: {key: 'BUYER', label: 'Buyers', icon: {library: 'Svg', name: 'ApartmentIcon',size: 40}},
+  SELLER: {key: 'SELLER', label: 'Sellers', icon: {library: 'Svg', name: 'ApartmentIcon',size: 40}},
+  COMPANY: {key: 'COMPANY', label: 'Company', icon: {library: 'Svg', name: 'BusinessIcon',size: 40}},
+  USER: {key: 'USER', label: 'User', icon: {library: 'Svg', name: 'UserSvgIcon',size: 40}},
   OTHER: DEFAULT_META,
 };
 

@@ -1,19 +1,19 @@
 import {View, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import React from 'react';
 import {Colors, Shadows} from '@/theme';
-import Button from '@/component/button';
 import DeleteIcon from 'react-native-vector-icons/Ionicons';
-import EditIcon from '@/component/icons/EditIcon';
-import { Permission } from '@/permissions/engine';
-import { hasPermission } from '@/permissions/hasPermission';
-import { MaterialIcons } from '../icons/VectorIcon';
+import {Permission} from '@/permissions/engine';
+import {hasPermission} from '@/permissions/hasPermission';
+import { HistoryIcon, EditIcon } from '@/component/icons';
 
 type Props = {
-  onClickEdit: () => void;
-  onClickDelete: () => void;
+  onClickEdit?: () => void;
+  onClickDelete?: () => void;
+  onClickHistory?: () => void;
   children: React.ReactNode;
   containerStyle?: ViewStyle;
   permission?: Permission[];
+  showDelete?: boolean;
 };
 
 enum UserPermission {
@@ -22,35 +22,49 @@ enum UserPermission {
   DELETE = 'COMPANY_SELLER_DELETE',
 }
 
-export default function Table({onClickEdit, onClickDelete, children, containerStyle, permission}: Props) {
+export default function Table({
+  onClickEdit,
+  onClickDelete,
+  onClickHistory,
+  children,
+  containerStyle,
+  permission,
+  showDelete,
+}: Props) {
   const canEdit = hasPermission(permission, UserPermission.UPDATE);
   const canDelete = hasPermission(permission, UserPermission.DELETE);
-  const canCreate = hasPermission(permission, UserPermission.CREATE);
+  const showHeader =
+    !!onClickHistory || (canEdit && !!onClickEdit) || (canDelete && !!onClickDelete);
+   
   return (
-      <View style={[styles.contentContainer, containerStyle]}>
+    <View style={[styles.contentContainer, containerStyle]}>
+      
+      {showHeader ? (
         <View style={styles.invoiceContainer}>
-          <TouchableOpacity activeOpacity={0.8} onPress={() => console.log()}>
-          <MaterialIcons name="history" size={24} color={Colors.black} />
-          </TouchableOpacity>
-           {canEdit && <TouchableOpacity activeOpacity={0.8} onPress={onClickEdit}>
-            <EditIcon size={24} />
-          </TouchableOpacity>}
-          {canDelete && <TouchableOpacity activeOpacity={0.8} onPress={onClickDelete}>
-            <DeleteIcon name="trash-outline" size={24} color={Colors.red} />
-          </TouchableOpacity>}
-        </View>
-        {children}
-        {canCreate && <Button
-          title="Create"
-          onHandler={() => console.log()}
-          style={styles.button}
-        />
+          {!!onClickHistory && (
+            <TouchableOpacity activeOpacity={0.5} onPress={onClickHistory}>
+              <HistoryIcon/>
+            </TouchableOpacity>
+          )}
+          {!showDelete && 
+          canEdit && !!onClickEdit && (
+            <TouchableOpacity activeOpacity={0.5} onPress={onClickEdit}>
+              <EditIcon size={24} />
+            </TouchableOpacity>
+          )}
+          {!showDelete && canDelete && !!onClickDelete && (
+            <TouchableOpacity activeOpacity={0.5} onPress={onClickDelete}>
+              <DeleteIcon name="trash-outline" size={24} color={Colors.red} />
+            </TouchableOpacity>
+          )
         }
-      </View>
+        </View>
+      ) : null}
+      {children}
+    </View>
   );
 }
 const styles = StyleSheet.create({
-
   contentContainer: {
     width: '93%',
     backgroundColor: Colors.white,
@@ -71,8 +85,5 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     padding: 10,
-  },
-  button: {
-    marginBottom: 10,
   },
 });

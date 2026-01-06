@@ -94,3 +94,15 @@ import type {Permission} from '@/permissions/engine';
       },
     },
   }
+
+
+ export type historyProps = {
+    id: number;
+    name:string;
+  }
+
+  export type getHistoryProps = {
+    createdAt: string;
+    amountChanged: number;
+    note: string | null;
+  }

@@ -1,22 +1,32 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {RootStackParamList} from '@/navigation/types';
 import {AllCompanyProps, HomeListProps} from '@/types';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import {GetAllCompanies} from '@/services/Compny/AllCompanies';
-import { refreshTokenService } from '@/services/AuthService/RefreshToken';
+import {refreshTokenService} from '@/services/AuthService/RefreshToken';
 import useAuthStore from '@/zustland/authStore';
+import {useNavigation} from '@react-navigation/native';
+import {DeleteCompany} from '@/services/Compny/DeleteCompany';
+import { useToast } from '@/component/toast/ToastProvider';
 type Props = NativeStackScreenProps<RootStackParamList, 'Seller'>;
 
 export default function useSeller(route: Props) {
   const {item} = route.route.params;
+  const {show} = useToast();
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const {refreshToken} = useAuthStore();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [seller, setSeller] = useState<AllCompanyProps[]>([]);
   const [page, setPage] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState(true);
   const getAllCompaniesRef = useRef<() => void>(() => {});
-
+  const [visible, setVisible] = useState(false);
+  const [id, setId] = useState<number>(0);
 
   // refresh token //
   const onSubmitRefreshToken = useCallback(() => {
@@ -68,7 +78,7 @@ export default function useSeller(route: Props) {
     });
   }, [page, onSubmitRefreshToken]);
 
-
+  // load more data //
   const loadMore = useCallback(() => {
     if (loading || loadingMore || !hasNextPage) {
       return;
@@ -76,11 +86,42 @@ export default function useSeller(route: Props) {
     setPage(p => p + 1);
   }, [hasNextPage, loading, loadingMore]);
 
+  // navigate to history //
+  const onHandlerHistory = (id: number, name: string) => {
+    navigation.navigate('History', {item: {id: id, name: name}});
+  };
+
+  // submit delete //
+  const onSubmitDelete = (id: number) => {
+    setVisible(() => true);
+    setId(id);
+  };
+
+  const onSubmitConfirm = () => {
+    setLoading(true);
+    DeleteCompany(id, {
+      onSuccess: () => {
+        setVisible(() => false);
+        getAllCompanies();
+      },
+      onUnauthorized: () => {
+        onSubmitRefreshToken();
+      },
+      onError: () => {
+        show('Failed to delete company', {type: 'error'});
+        setVisible(() => false);
+        setLoading(false);
+      },
+    });
+  };
+
+  const onSubmitCancel = () => {
+    setVisible(() => false);
+  };
 
   useEffect(() => {
     getAllCompaniesRef.current = getAllCompanies;
   }, [getAllCompanies]);
-
 
   useEffect(() => {
     getAllCompanies();
@@ -92,5 +133,10 @@ export default function useSeller(route: Props) {
     hasNextPage,
     seller,
     loadMore,
+    onHandlerHistory,
+    onSubmitConfirm,
+    visible,
+    onSubmitDelete,
+    onSubmitCancel,
   };
 }

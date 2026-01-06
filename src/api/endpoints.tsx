@@ -6,6 +6,8 @@ type Endpoints = {
   GetBuyers: string;
   GetSeller: string;
   GetAllCompanies: string;
+  GetCompanyHistory: string;
+  DeleteCompany: string;
 }
 
 export const endpoints:Endpoints = {
@@ -21,4 +23,6 @@ export const endpoints:Endpoints = {
   GetAllCompanies: 'company/all',
   GetBuyers: 'company/buyer',
   GetSeller: 'company/seller',
+  GetCompanyHistory: 'company/company-history/',
+  DeleteCompany: 'company/delete/',
 };

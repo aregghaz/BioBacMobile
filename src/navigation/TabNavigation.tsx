@@ -7,8 +7,12 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import type {RootStackParamList, TabParamList} from './types';
 //-------------Home----------------
 import Home from '@/screen/Home';
+//-------------Buyers----------------
 import Buyers from '@/screen/Buyers';
+//-------------Seller----------------
 import Seller from '@/screen/Seller';
+import History from '@/screen/Seller/History';
+
 import { deviceHeight } from '@/helper';
 import { FontFamily } from '@/theme';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -97,6 +101,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="Home" component={Home} />
       <HomeStack.Screen name="Buyers" component={Buyers} />
       <HomeStack.Screen name="Seller" component={Seller} />
+      <HomeStack.Screen name="History" component={History} />
     </HomeStack.Navigator>
   );
 }
