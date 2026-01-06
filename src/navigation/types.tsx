@@ -11,6 +11,7 @@ export type RootStackParamList = {
   Buyers: {item: HomeListProps};
   Seller: {item: HomeListProps};
   History: {item: historyProps};
+  HistoryBuyers: {item: historyProps};
 };
 
 export type TabParamList = {

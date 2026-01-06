@@ -9,6 +9,7 @@ import type {RootStackParamList, TabParamList} from './types';
 import Home from '@/screen/Home';
 //-------------Buyers----------------
 import Buyers from '@/screen/Buyers';
+import HistoryBuyers from '@/screen/Buyers/HistoryBuyers';
 //-------------Seller----------------
 import Seller from '@/screen/Seller';
 import History from '@/screen/Seller/History';
@@ -102,6 +103,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="Buyers" component={Buyers} />
       <HomeStack.Screen name="Seller" component={Seller} />
       <HomeStack.Screen name="History" component={History} />
+      <HomeStack.Screen name="HistoryBuyers" component={HistoryBuyers} />
     </HomeStack.Navigator>
   );
 }

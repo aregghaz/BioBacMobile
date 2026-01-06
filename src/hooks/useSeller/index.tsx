@@ -47,7 +47,7 @@ export default function useSeller(route: Props) {
     } else {
       setLoadingMore(true);
     }
-    return GetAllCompanies(page, {
+    return GetAllCompanies(page,2, {
       onSuccess: payload => {
         const {data} = payload as {data: AllCompanyProps[]};
         const {metadata} = payload as unknown as {

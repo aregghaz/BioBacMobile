@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
 
 
   title: {
+    width: '90%',
     color: Colors.black,
     fontSize: 20,
     fontFamily: FontFamily.semiBold,

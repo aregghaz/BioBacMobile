@@ -9,7 +9,7 @@ export default function HistoryCard({element}: {element: getHistoryProps}) {
   return (
     <View style={styles.container}>
         {!element ?
-            <NotFound /> :
+            <NotFound size={100} /> :
             <>
             <View style={styles.row}>
                 <Text style={styles.title}>Amount Changed:</Text>
@@ -37,9 +37,9 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'space-between',
         marginTop:'2%',
+        alignItems:'center',
     },
     title: {
         fontFamily: FontFamily.semiBold,

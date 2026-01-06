@@ -10,6 +10,7 @@ export type AllCompanyResult<T> = StatusResult<T>;
 
 export const GetAllCompanies = async <T extends object>(
   page: number = 0,
+  value: number = 0,
   result: AllCompanyCallbacks<T> = {},
 ): Promise<AllCompanyResult<T>> => {
   return requestWithStatus<T>({
@@ -17,7 +18,7 @@ export const GetAllCompanies = async <T extends object>(
       method: 'POST',
       url: `${endpoints.GetAllCompanies}?sortBy=id&sortDir=DESC&page=${page}&size=20`,
       data: {
-        typeIds: {operator: 'contains', value: [2]},
+        typeIds: {operator: 'contains', value: [value]},
       },
     },
     callbacks: result,

@@ -17,9 +17,9 @@ type Props = {
 };
 
 enum UserPermission {
-  CREATE = 'COMPANY_SELLER_CREATE',
-  UPDATE = 'COMPANY_SELLER_UPDATE',
-  DELETE = 'COMPANY_SELLER_DELETE',
+  CREATE = 'COMPANY_BUYER_CREATE',
+  UPDATE = 'COMPANY_BUYER_UPDATE',
+  DELETE = 'COMPANY_BUYER_DELETE',
 }
 
 export default function Table({
@@ -33,12 +33,14 @@ export default function Table({
 }: Props) {
   const canEdit = hasPermission(permission, UserPermission.UPDATE);
   const canDelete = hasPermission(permission, UserPermission.DELETE);
+
+  const allowActions = !showDelete;
   const showHeader =
-    !!onClickHistory || (canEdit && !!onClickEdit) || (canDelete && !!onClickDelete);
-   
-  return (
+    !!onClickHistory ||
+    (allowActions && ((canEdit && !!onClickEdit) || (canDelete && !!onClickDelete)));
+
+    return (
     <View style={[styles.contentContainer, containerStyle]}>
-      
       {showHeader ? (
         <View style={styles.invoiceContainer}>
           {!!onClickHistory && (
@@ -46,13 +48,12 @@ export default function Table({
               <HistoryIcon/>
             </TouchableOpacity>
           )}
-          {!showDelete && 
-          canEdit && !!onClickEdit && (
+          {allowActions && canEdit && !!onClickEdit && (
             <TouchableOpacity activeOpacity={0.5} onPress={onClickEdit}>
               <EditIcon size={24} />
             </TouchableOpacity>
           )}
-          {!showDelete && canDelete && !!onClickDelete && (
+          {allowActions && canDelete && !!onClickDelete && (
             <TouchableOpacity activeOpacity={0.5} onPress={onClickDelete}>
               <DeleteIcon name="trash-outline" size={24} color={Colors.red} />
             </TouchableOpacity>
