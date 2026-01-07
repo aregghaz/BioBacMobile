@@ -2,7 +2,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
 import {AllCompanyProps} from '@/types';
 import {Colors, FontFamily, FontSizes} from '@/theme';
-
+import {t} from '@/locales';
 export default function Card({element}: {element: AllCompanyProps}) {
   const createdAtDate = element.createdAt.split(':')[0];
   const backgroundColor = element.deleted ? Colors.red_300 : Colors.white;
@@ -13,27 +13,27 @@ export default function Card({element}: {element: AllCompanyProps}) {
         { backgroundColor: backgroundColor}
       ]}>
       <View style={styles.row}>
-        <Text style={styles.title}>Name:</Text>
+        <Text style={styles.title}>{t('common.name')}:</Text>
         <Text style={styles.value}>{element.name}</Text>
       </View>
       <View style={styles.row}>
-        <Text style={styles.title}>Creditor Amount:</Text>
+        <Text style={styles.title}>{t('common.creditorAmount')}:</Text>
         <Text style={styles.value}>{element.creditorAmount}</Text>
       </View>
       <View style={styles.row}>
-        <Text style={styles.title}>Debtor Amount:</Text>
+        <Text style={styles.title}>{t('common.debtorAmount')}:</Text>
         <Text style={styles.value}>{element.debtorAmount}</Text>
       </View>
       <View style={styles.row}>
-        <Text style={styles.title}>Phone Number:</Text>
+        <Text style={styles.title}>{t('common.phoneNumber')}:</Text>
         <Text style={styles.value}>{element.phones[0]}</Text>
       </View>
       <View style={styles.row}>
-        <Text style={styles.title}>Email:</Text>
+        <Text style={styles.title}>{t('common.email')}:</Text>
         <Text style={styles.value}>{element.emails[0]}</Text>
       </View>
       <View style={styles.row}>
-        <Text style={styles.title}>Created At:</Text>
+        <Text style={styles.title}>{t('common.createdAt')}:</Text>
         <Text style={styles.value}>{createdAtDate}</Text>
       </View>
     </View>

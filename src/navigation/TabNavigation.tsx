@@ -3,6 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import type {BottomTabBarButtonProps} from '@react-navigation/bottom-tabs';
 import {Platform, Pressable} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
 
 import type {RootStackParamList, TabParamList} from './types';
 //-------------Home----------------
@@ -14,6 +15,10 @@ import HistoryBuyers from '@/screen/Buyers/HistoryBuyers';
 import Seller from '@/screen/Seller';
 import History from '@/screen/Seller/History';
 
+//-------------Settings----------------
+import Settings from '@/screen/Settings';
+
+
 import { deviceHeight } from '@/helper';
 import { FontFamily } from '@/theme';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -23,6 +28,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 const HomeStack = createNativeStackNavigator<RootStackParamList>();
+const SettingsStack = createNativeStackNavigator<RootStackParamList>();
 
 const baseScreenOptions = {
   headerShown: false,
@@ -75,15 +81,18 @@ function TabBarIcon({
   size: number;
   focused: boolean;
 }) {
-  const name =
-    routeName === 'HomeScreen'
-      ? focused
-        ? 'home'
-        : 'home'
-      : focused
-      ? 'settings'
-      : 'settings-outline';
-  return <AntDesign name={name} size={size} color={color} />;
+  if (routeName === 'HomeScreen') {
+    return <AntDesign name="home" size={size} color={color} />;
+  }
+
+  // Settings tab (Ionicons)
+  return (
+    <Feather
+      name={focused ? 'settings' : 'settings'}
+      size={28}
+      color={color}
+    />
+  );
 }
 
 const screenOptions = ({route}: {route: {name: keyof TabParamList}}) => ({
@@ -106,13 +115,23 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="HistoryBuyers" component={HistoryBuyers} />
     </HomeStack.Navigator>
   );
-}
+};
+
+const SettingStackScreen = () => {
+  return (
+    <SettingsStack.Navigator screenOptions={{headerShown: false}}>
+      <SettingsStack.Screen name="Settings" component={Settings} />
+    </SettingsStack.Navigator>
+  );
+};
+
 
 export default function TabNavigation() {
   return (
     <Tab.Navigator
       screenOptions={screenOptions}>
       <Tab.Screen name="HomeScreen" component={HomeStackScreen} />
+      <Tab.Screen name="SettingsScreen" component={SettingStackScreen} />
     </Tab.Navigator>
   );
 }

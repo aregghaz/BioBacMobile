@@ -3,7 +3,7 @@ import React from 'react';
 import {getHistoryProps} from '@/types';
 import {FontFamily, FontSizes} from '@/theme';
 import NotFound from '@/component/icons/NotFound';
-
+import {t} from '@/locales';
 export default function HistoryCard({element}: {element: getHistoryProps}) {
   const createdAtDate = element.createdAt.split(':')[0]
   return (
@@ -12,15 +12,15 @@ export default function HistoryCard({element}: {element: getHistoryProps}) {
             <NotFound /> :
             <>
             <View style={styles.row}>
-                <Text style={styles.title}>Amount Changed:</Text>
+                <Text style={styles.title}>{t('common.amountChanged')}:</Text>
                 <Text style={styles.value}>{element.amountChanged}</Text>
             </View>
             <View style={[styles.row,styles.stretch]}>
-                <Text style={styles.title}>Note:</Text>
+                <Text style={styles.title}>{t('common.note')}:</Text>
                 <Text style={styles.value}>{element.note}</Text>
             </View>
             <View style={styles.row}>
-                <Text style={styles.title}>Action Time:</Text>
+                <Text style={styles.title}>{t('common.actionTime')}:</Text>
                 <Text style={styles.value}>{createdAtDate}</Text>
             </View>
             </>

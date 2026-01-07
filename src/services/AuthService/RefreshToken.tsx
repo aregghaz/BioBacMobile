@@ -8,11 +8,15 @@ export const refreshTokenService = async <T extends object>(
   refreshToken: string,
   result: RefreshTokenCallbacks<T> = {},
 ): Promise<RefreshTokenResult<T>> => {
+  console.log('onSubmitRefreshToken',typeof refreshToken, refreshToken);
   return requestWithStatus<T>({
+
     config: {
       method: 'POST',
       url: endpoints.RefreshToken,
-      data: {refreshToken},
+  
+      transformRequest: [(data) => data],
+      data: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiaW9iYWNhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE3Njc3Nzk4NjF9.cFP5ulLU1Vj7r3VXNyNDJWdUhTDvQ2j2jkXPv-rGRUo',
     },
     callbacks: result,
   });

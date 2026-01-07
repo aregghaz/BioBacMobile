@@ -1,0 +1,25 @@
+{
+  "company":{
+    "companyBuyerList": "Покупатели",
+    "companiesSellerList": "Продавцы"
+  },
+  "common": {
+    "ok": "ХОРОШО",
+    "cancel": "Отмена",
+    "name": "Имя",
+    "creditorAmount": "Сумма кредитора",
+    "debtorAmount": "Сумма дебитора",
+    "phoneNumber": "ТЕЛЕФОН",
+    "email": "EMAIL",
+    "createdAt": "ДАТА СОЗДАНИЯ",
+    "Filter": "Фильтр",
+    "amountChanged": "Изменение суммы",
+    "note": "ПРИМЕЧАНИЕ",
+    "actionTime": "Время действий"
+  },
+  "settings": {
+    "title": "Настройки",
+    "language": "Язык"
+  }
+}
+

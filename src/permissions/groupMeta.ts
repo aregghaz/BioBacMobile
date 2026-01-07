@@ -21,10 +21,8 @@ const DEFAULT_META: GroupMeta = {
  * You can freely change icons/order without touching the permission engine.
  */
 export const PERMISSION_GROUP_META: Readonly<Record<string, GroupMeta>> = {
-  BUYER: {key: 'BUYER', label: 'Buyers', icon: {library: 'Svg', name: 'ApartmentIcon',size: 40}},
-  SELLER: {key: 'SELLER', label: 'Sellers', icon: {library: 'Svg', name: 'ApartmentIcon',size: 40}},
-  COMPANY: {key: 'COMPANY', label: 'Company', icon: {library: 'Svg', name: 'BusinessIcon',size: 40}},
-  USER: {key: 'USER', label: 'User', icon: {library: 'Svg', name: 'UserSvgIcon',size: 40}},
+  BUYER: {key: 'BUYER', label: 'buyers', icon: {library: 'Svg', name: 'ApartmentIcon',size: 40}},
+  SELLER: {key: 'SELLER', label: 'sellers', icon: {library: 'Svg', name: 'ApartmentIcon',size: 40}},
   OTHER: DEFAULT_META,
 };
 

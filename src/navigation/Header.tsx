@@ -55,17 +55,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 60,
     paddingHorizontal: 16,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   backContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+   position: 'absolute',
+   left: 20,
   },
 
 
   title: {
-    width: '90%',
     color: Colors.black,
     fontSize: 20,
     fontFamily: FontFamily.semiBold,

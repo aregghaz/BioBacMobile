@@ -12,10 +12,12 @@ export type RootStackParamList = {
   Seller: {item: HomeListProps};
   History: {item: historyProps};
   HistoryBuyers: {item: historyProps};
+  Settings: undefined;
 };
 
 export type TabParamList = {
   HomeScreen: undefined;
+  SettingsScreen: undefined;
 };
 
 

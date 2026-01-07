@@ -8,7 +8,7 @@ import {
 import {GetAllCompanies} from '@/services/Compny/AllCompanies';
 import {refreshTokenService} from '@/services/AuthService/RefreshToken';
 import useAuthStore from '@/zustland/authStore';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {DeleteCompany} from '@/services/Compny/DeleteCompany';
 import { useToast } from '@/component/toast/ToastProvider';
 type Props = NativeStackScreenProps<RootStackParamList, 'Seller'>;
@@ -123,9 +123,12 @@ export default function useSeller(route: Props) {
     getAllCompaniesRef.current = getAllCompanies;
   }, [getAllCompanies]);
 
-  useEffect(() => {
-    getAllCompanies();
-  }, [getAllCompanies]);
+  useFocusEffect(
+    useCallback(() => {
+      getAllCompanies();
+    }, [getAllCompanies])
+  );
+
   return {
     item: item as HomeListProps,
     loading,

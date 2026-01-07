@@ -13,9 +13,7 @@ import VerticalFlatList from '@/component/list/VerticalFlatList';
 import {AllCompanyProps} from '@/types';
 import NotFound from '@/component/icons/NotFound';
 import {ConfirmDeleteModal} from '@/component/Modal';
-import Button from '@/component/button';
-import {AntDesign} from '@/component/icons/VectorIcon';
-import FilterIcon from '@/component/icons/FilterIcon';
+import Filter from '@/component/Filter';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Seller'>;
 
@@ -44,20 +42,7 @@ export default function Seller(route: Props) {
         </View>
       ) : (
         <>
-        <View style={styles.buttonContainer}>
-        <Button
-            title="Filter"
-            icon={<FilterIcon size={24} color={Colors.gray_400} />}
-            onHandler={() => console.log()}
-            textStyle={{color: Colors.gray_400}}
-            style={styles.filterButton}
-          />
-          <Button
-            titleIcon={<AntDesign name="plus" size={24} color={Colors.white} />}
-            onHandler={() => console.log()}
-            style={styles.button}
-          />
-             </View>
+         <Filter />
           <VerticalFlatList
             data={seller}
             gap={10}
@@ -122,22 +107,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  button: {
-    width: '15%',
-  },
-  filterButton: {
-    width: '30%',
-    backgroundColor: Colors.white,
-    borderWidth: 1,
-    borderColor: Colors.gray_200,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: 10,
-    gap: 10,
-    width: '93%',
-    alignSelf: 'center',
-  },
+
 });

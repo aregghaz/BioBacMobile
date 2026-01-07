@@ -29,8 +29,6 @@ apiClient.interceptors.request.use(config => {
 apiClient.interceptors.response.use(
   res => res,
   err => {
-    // هیچ refresh-token اتوماتیکی روی 401 انجام نده؛ خطا رو همون‌طور برگردون
-    // (هندل کردن refresh رو می‌تونید داخل hook/service انجام بدید)
     return Promise.reject(err);
   },
 );

@@ -1,0 +1,26 @@
+{
+  "company":{
+    "companyBuyerList": "Buyers",
+    "companiesSellerList": "Sellers"
+  },
+  "common": {
+    "ok": "Ok",
+    "cancel": "Cancel",
+    "name": "Name",
+    "creditorAmount": "Creditor Amount",
+    "debtorAmount": "Debtor Amount",
+    "phoneNumber": "Phone Number",
+    "email": "Email",
+    "createdAt": "Created At",
+    "Filter": "Filter",
+    "amountChanged": "Amount Changed",
+    "note": "Note",
+    "actionTime": "Action Time"
+    
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language"
+  }
+}
+

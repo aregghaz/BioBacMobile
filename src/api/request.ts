@@ -37,14 +37,13 @@ export async function requestWithStatus<TResponse extends object>(
     return {ok: false, status: res.status, error: err};
   } catch (err) {
     const status = axios.isAxiosError(err) ? err.response?.status : undefined;
-
     if (status === 401) {
       const data = axios.isAxiosError(err) ? err.response?.data : undefined;
       callbacks.onUnauthorized?.(data, err);
       console.log('Unauthorized',data);
       return {ok: false, status: 401, error: err, data};
     }
-
+    console.log('Error',err);
     callbacks.onError?.(err, status);
     return {ok: false, status: status ?? 0, error: err};
   }
