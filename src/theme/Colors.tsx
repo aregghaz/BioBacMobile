@@ -14,6 +14,7 @@ export const Colors = {
     red:'#CC0000',
     green:'#16A34A',
     blue: '#2a85ff',
+    blue_100:'#4996ff4a',
     cardgray:'#DEDEDE',
     lightBlack:'#434343',
 }

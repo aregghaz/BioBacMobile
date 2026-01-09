@@ -8,7 +8,6 @@ type Endpoints = {
   GetAllCompanies: string;
   GetCompanyHistory: string;
   DeleteCompany: string;
-  
 }
 
 export const endpoints:Endpoints = {

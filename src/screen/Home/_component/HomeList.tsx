@@ -5,6 +5,7 @@ import {FontFamily, FontSizes, Shadows} from '@/theme';
 import {HomeListProps} from '@/types';
 import {ApartmentIcon, BusinessIcon, NotFound, UserSvgIcon} from '@/component/icons';
 import {t} from '@/locales';
+import {PaymentIcon} from '@/component/icons';
 export default function HomeList({
   item,
   onCallback,
@@ -17,6 +18,8 @@ export default function HomeList({
       ? ApartmentIcon
       : item.iconName === 'BusinessIcon'
       ? BusinessIcon
+      : item.iconName === 'PaymentIcon'
+      ? PaymentIcon
       : item.iconName === 'UserSvgIcon'
       ? UserSvgIcon
       : NotFound;
@@ -27,7 +30,7 @@ export default function HomeList({
       onPress={() => onCallback(item)}
       style={styles.groupRow}>
       <SvgIcon size={item.iconSize ?? 40} color={Colors.black} />
-      <Text style={styles.groupTitle}>{item.label === 'buyers' ? t('company.companyBuyerList') : t('company.companiesSellerList')}</Text>
+      <Text style={styles.groupTitle}>{item.label === 'buyers' ? t('company.companyBuyerList') : item.label === 'sellers' ? t('company.companiesSellerList') : item.label === 'payments' ? t('company.companiesPaymentList') : 'other'}</Text>
     </TouchableOpacity>
   );
 }

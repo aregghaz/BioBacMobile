@@ -1,7 +1,9 @@
 {
   "company":{
     "companyBuyerList": "Покупатели",
-    "companiesSellerList": "Продавцы"
+    "companiesSellerList": "Продавцы",
+    "companiesPaymentList": "Платежи"
+
   },
   "common": {
     "ok": "ХОРОШО",

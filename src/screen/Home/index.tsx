@@ -4,7 +4,7 @@ import {Colors} from '@/theme/Colors';
 import VerticalFlatList from '@/component/list/VerticalFlatList';
 import useHome from '@/hooks/useHome';
 import HomeList from './_component/HomeList';
-import Activity from '@/component/ActivityIndicator';
+import Activity from '@/component/activityIndicator';
 import {HomeListProps} from '@/types';
 
 export default function Home() {

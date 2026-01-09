@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback,useState} from 'react';
 import {GetProfileResponse} from '@/types';
 import {GetProfile} from '@/services/Profile';
 import useProfileStore from '@/zustland/profileStore';
@@ -31,7 +31,7 @@ export default function useHome() {
           fullPermissions: permissions,
           userPermissions: data.permissions,
         });
-        const groupsData = orderGrouped(result.grouped, ['BUYER', 'SELLER'], {
+        const groupsData = orderGrouped(result.grouped, ['BUYER', 'SELLER', 'PAYMENT'], {
           includeEmpty: true,
         }).map(g => {
           const enabled = g.items.filter(x => x.has).length;
@@ -116,6 +116,9 @@ export default function useHome() {
           break;
         case 'SELLER':
           navigation.navigate('Seller', {item});
+          break;
+        case 'PAYMENT':
+          navigation.navigate('Payment');
           break;
         default:
           console.warn(`Unknown home item key: ${item.key}`);

@@ -18,6 +18,9 @@ import History from '@/screen/Seller/History';
 //-------------Settings----------------
 import Settings from '@/screen/Settings';
 
+//-------------Payment----------------
+import Payment from '@/screen/payment';
+
 
 import { deviceHeight } from '@/helper';
 import { FontFamily } from '@/theme';
@@ -113,6 +116,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="Seller" component={Seller} />
       <HomeStack.Screen name="History" component={History} />
       <HomeStack.Screen name="HistoryBuyers" component={HistoryBuyers} />
+      <HomeStack.Screen name="Payment" component={Payment} />
     </HomeStack.Navigator>
   );
 };

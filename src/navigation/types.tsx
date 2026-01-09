@@ -12,6 +12,7 @@ export type RootStackParamList = {
   Seller: {item: HomeListProps};
   History: {item: historyProps};
   HistoryBuyers: {item: historyProps};
+  Payment: undefined;
   Settings: undefined;
 };
 

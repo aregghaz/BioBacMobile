@@ -23,6 +23,7 @@ const DEFAULT_META: GroupMeta = {
 export const PERMISSION_GROUP_META: Readonly<Record<string, GroupMeta>> = {
   BUYER: {key: 'BUYER', label: 'buyers', icon: {library: 'Svg', name: 'ApartmentIcon',size: 40}},
   SELLER: {key: 'SELLER', label: 'sellers', icon: {library: 'Svg', name: 'ApartmentIcon',size: 40}},
+  PAYMENT: {key: 'PAYMENT', label: 'payments', icon: {library: 'Svg', name: 'PaymentIcon',size: 40}},
   OTHER: DEFAULT_META,
 };
 

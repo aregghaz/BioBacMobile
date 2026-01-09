@@ -7,7 +7,7 @@ import Header from '@/navigation/Header';
 import Table from '@/component/Table';
 import useBuyers from '@/hooks/useBuyers';
 import Card from './_component/Card';
-import Activity from '@/component/ActivityIndicator';
+import Activity from '@/component/activityIndicator';
 import {deviceHeight} from '@/helper';
 import VerticalFlatList from '@/component/list/VerticalFlatList';
 import {AllCompanyProps} from '@/types';

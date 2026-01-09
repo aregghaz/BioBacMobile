@@ -1,7 +1,8 @@
 {
   "company":{
     "companyBuyerList": "Buyers",
-    "companiesSellerList": "Sellers"
+    "companiesSellerList": "Sellers",
+    "companiesPaymentList": "Payments"
   },
   "common": {
     "ok": "Ok",
