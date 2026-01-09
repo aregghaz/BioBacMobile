@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-  import { StyleSheet, View, Text } from 'react-native';
+  import { StyleSheet, View, Text, ViewStyle } from 'react-native';
   import { Dropdown } from 'react-native-element-dropdown';
     import {Feather} from '@/component/icons/VectorIcon';
-import { Colors, FontFamily, FontSizes } from '@/theme';
+import { Colors, FontFamily, FontSizes, Shadows } from '@/theme';
 
   const data = [
     { label: 'Item 1', value: '1' },
@@ -15,7 +15,7 @@ import { Colors, FontFamily, FontSizes } from '@/theme';
     { label: 'Item 8', value: '8' },
   ];
 
-  const DropdownComponent = () => {
+  const DropdownComponent = ({style}: {style?: ViewStyle}) => {
     const [value, setValue] = useState(null);
     const [_isFocused, setIsFocused] = useState(false);
 
@@ -48,7 +48,7 @@ import { Colors, FontFamily, FontSizes } from '@/theme';
 
     return (
       <Dropdown
-        style={styles.dropdown}
+        style={[styles.dropdown,{borderColor:_isFocused ? Colors.blue : Colors.gray_200}, style]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         iconStyle={styles.iconStyle}
@@ -58,7 +58,7 @@ import { Colors, FontFamily, FontSizes } from '@/theme';
         maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder="Select..."
+        placeholder="Select"
         searchPlaceholder="Search..."
         value={value}
         onChange={item => {
@@ -79,20 +79,13 @@ import { Colors, FontFamily, FontSizes } from '@/theme';
 
   const styles = StyleSheet.create({
     dropdown: {
-      margin: 16,
-      height: 50,
+      width: '93%',
+      alignSelf: 'center',
       backgroundColor: 'white',
       borderRadius: 12,
       padding: 12,
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 1,
-      },
-      shadowOpacity: 0.2,
-      shadowRadius: 1.41,
-
-      elevation: 2,
+      borderWidth: 1,
+      ...Shadows.md,
     },
     icon: {
       marginRight: 5,
@@ -100,7 +93,7 @@ import { Colors, FontFamily, FontSizes } from '@/theme';
     item: {
         width: '95%',
         alignSelf: 'center',
-      padding: 17,
+      padding: 12,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -116,8 +109,8 @@ import { Colors, FontFamily, FontSizes } from '@/theme';
     },
     placeholderStyle: {
         fontSize: FontSizes.medium,
-        fontFamily: FontFamily.medium,
-        color: Colors.gray_300,
+        fontFamily: FontFamily.regular,
+        color: Colors.gray,
         },
     selectedTextStyle: {
       fontSize: 16,

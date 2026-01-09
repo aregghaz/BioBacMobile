@@ -4,12 +4,12 @@ import {
   StyleProp,
   StyleSheet,
   Text,
-  View,
   ViewStyle,
 } from 'react-native';
 import {Calendar, DateData, LocaleConfig} from 'react-native-calendars';
 
 import {Colors, FontFamily, FontSizes} from '@/theme';
+import BaseModal from '../Modal/BaseModal';
 
 type MarkedDates = Record<string, any>;
 
@@ -73,6 +73,15 @@ export type BiobacCalendarProps = {
   containerStyle?: StyleProp<ViewStyle>;
   selectedBgColor?: string;
   selectedTextColor?: string;
+  isVisible?: boolean;
+  onClose?: (showDate: boolean) => void;
+  onConfirm?: (payload: {
+    day: number;
+    month: number;
+    year: number;
+    dateString: string;
+    timestamp: number;
+  }) => void;
 };
 
 function toISODate(d: Date) {
@@ -102,8 +111,12 @@ const Calender = ({
   containerStyle,
   selectedBgColor = Colors.blue_100,
   selectedTextColor = Colors.blue,
+  isVisible,
+  onConfirm,
+  onClose,
 }: BiobacCalendarProps) => {
   const today = useMemo(() => toISODate(new Date()), []);
+  const [showDate, setShowDate] = useState(false);
   const effectiveMinDate =
     minDate ??
     (pastDaysEnabled !== undefined
@@ -122,6 +135,14 @@ const Calender = ({
     }
   }, [value]);
 
+  // show date picker
+  useEffect(() => {
+    if (isVisible) {
+      setShowDate(true);
+    } else {
+      setShowDate(false);
+    }
+  }, [isVisible]);
   const selectedDate = value !== undefined ? value : internalValue;
   const initialDate = selectedDate ?? effectiveMaxDate ?? today;
 
@@ -151,15 +172,43 @@ const Calender = ({
     };
   }, [markedDates, selectedBgColor, selectedDate, selectedTextColor]);
 
+  const closeModal = useCallback(() => {
+    setShowDate(false);
+    onClose?.(false);
+  }, [onClose]);
+
+  const confirmWithDate = useCallback(
+    (dateData: DateData) => {
+      onConfirm?.({
+        day: dateData.day,
+        month: dateData.month,
+        year: dateData.year,
+        dateString: dateData.dateString,
+        timestamp: dateData.timestamp,
+      });
+      closeModal();
+    },
+    [closeModal, onConfirm],
+  );
+
   const handleSelect = useCallback(
     (dateString: string, dateData: DateData) => {
       if (value === undefined) {
         setInternalValue(dateString);
       }
       onChange?.(dateString, dateData);
+      // Confirm on selecting an enabled day (disabled days can't trigger this)
+      if (onConfirm) {
+        confirmWithDate(dateData);
+      }
     },
-    [onChange, value],
+    [confirmWithDate, onChange, onConfirm, value],
   );
+
+  // (no separate confirm button currently; selecting a day confirms)
+
+
+
 
   const renderDay = useCallback(
     ({date, state}: any) => {
@@ -269,20 +318,33 @@ const Calender = ({
   }, [selectedBgColor, selectedTextColor]);
 
   return (
-    <View style={[styles.container, containerStyle]}>
-      <Calendar
-        disableAllTouchEventsForDisabledDays
-        firstDay={0}
-        initialDate={initialDate}
-        minDate={effectiveMinDate}
-        maxDate={effectiveMaxDate}
-        markedDates={computedMarkedDates}
-        onMonthChange={m => setVisibleMonth(m.month)}
-        dayComponent={renderDay}
-        theme={theme}
-        style={styles.calendar}
-      />
-    </View>
+    <BaseModal isVisible={showDate} onClose={() => onClose?.(showDate)}>
+      {/* Swallow presses so BaseModal overlay doesn't close when tapping inside */}
+      <Pressable onPress={() => {}} style={[styles.container, containerStyle]}>
+        <Calendar
+          disableAllTouchEventsForDisabledDays
+          firstDay={0}
+          initialDate={initialDate}
+          minDate={effectiveMinDate}
+          maxDate={effectiveMaxDate}
+          markedDates={computedMarkedDates}
+          onMonthChange={m => setVisibleMonth(m.month)}
+          dayComponent={renderDay}
+          theme={theme}
+          style={styles.calendar}
+        />
+
+        {/* <View style={styles.footer}>
+          <Pressable onPress={handleCancel} style={[styles.footerBtn, styles.btnCancel]}>
+            <Text style={[styles.footerBtnText, styles.btnCancelText]}>Cancel</Text>
+          </Pressable>
+
+          <Pressable onPress={handleConfirm} style={[styles.footerBtn, styles.btnConfirm]}>
+            <Text style={[styles.footerBtnText, styles.btnConfirmText]}>Confirm</Text>
+          </Pressable>
+        </View> */}
+      </Pressable>
+    </BaseModal>
   );
 };
 
@@ -311,6 +373,42 @@ const styles = StyleSheet.create({
   dayText: {
     fontFamily: FontFamily.semiBold,
     fontSize: FontSizes.medium,
+  },
+  footer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderTopColor: Colors.gray_200,
+    backgroundColor: Colors.white,
+  },
+  footerBtn: {
+    flex: 1,
+    height: 44,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+  },
+  footerBtnText: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSizes.medium,
+  },
+  btnCancel: {
+    backgroundColor: Colors.white,
+    borderColor: Colors.gray_200,
+  },
+  btnCancelText: {
+    color: Colors.black,
+  },
+  btnConfirm: {
+    backgroundColor: Colors.blue,
+    borderColor: Colors.blue,
+  },
+  btnConfirmText: {
+    color: Colors.white,
   },
 });
 

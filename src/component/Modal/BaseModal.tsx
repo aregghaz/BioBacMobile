@@ -3,7 +3,6 @@ import React from 'react';
 interface ModalCardProps {
   isVisible: boolean;
   onClose: () => void;
-  onConfirm: () => void;
   children: React.ReactNode;
 }
 

@@ -51,7 +51,7 @@ const TextInputComponent = (props: Props) => {
         : activeBorder
         ? Colors.blue
         : '#C4C4C4',
-      borderWidth: props.errorMessage ? 1.5 : activeBorder ? 1.5 : 1,
+      borderWidth: props.errorMessage ? 1.5 : activeBorder ? 1.5 : 0,
     }),
     [activeBorder, props.errorMessage],
   );
@@ -152,12 +152,12 @@ const TextInputComponent = (props: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '90%',
+    width: '93%',
     backgroundColor: Colors.white,
-    borderRadius: 14,
+    borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     alignSelf: 'center',
     shadowColor: '#000',
     shadowOffset: {

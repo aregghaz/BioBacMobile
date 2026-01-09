@@ -1,18 +1,24 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, ViewStyle } from 'react-native'
 import React from 'react'
 import { Colors, FontFamily, FontSizes } from '@/theme';
 
-export default function TextView() {
+interface TextViewProps {
+    title: string;
+  style?: ViewStyle
+}
+
+export default function TextView({title, style}: TextViewProps) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>TextView</Text>
+    <View style={[styles.container, style]}>
+      <Text style={[styles.text]}>{title}</Text>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    width:'93%'
+    width:'90%',
+    alignSelf: 'center',
   },
   text: {
     fontSize: FontSizes.medium,
