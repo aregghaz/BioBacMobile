@@ -51,7 +51,7 @@ const TextInputComponent = (props: Props) => {
         : activeBorder
         ? Colors.blue
         : '#C4C4C4',
-      borderWidth: props.errorMessage ? 1.5 : activeBorder ? 1.5 : 0,
+      borderWidth: props.errorMessage ? 1.5 : activeBorder ? 1 : 0,
     }),
     [activeBorder, props.errorMessage],
   );
@@ -89,6 +89,7 @@ const TextInputComponent = (props: Props) => {
       useNativeDriver: false,
     }).start();
     setActiveBorder(true);
+    props.onFocus?.();
   };
 
   return (
