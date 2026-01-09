@@ -36,6 +36,7 @@ export interface Props {
   SubmitEditing?: (val: any) => void | undefined;
   EndEditing?: (val: any) => void;
   KeyPress?: (val: any) => void;
+  inputSize?: 'small' | 'medium' | 'large';
 }
 
 const TextInputComponent = (props: Props) => {
@@ -97,6 +98,12 @@ const TextInputComponent = (props: Props) => {
           style={[
             styles.container,
             props.containerStyle,
+            props.inputSize === 'small'
+              ? {height: 40}
+              : props.inputSize === 'medium'
+              ? {height: 50}
+              : {height: 60},
+
             borderStyle,
           ]}>
           {props.leftIcon && <>{props.leftIcon}</>}
@@ -128,7 +135,9 @@ const TextInputComponent = (props: Props) => {
             secureTextEntry={!props.showPass}
           />
           {props.rightIcon && (
-            <TouchableOpacity onPress={props.handlePasswordIconClick} style={styles.rightIcon}>
+            <TouchableOpacity
+              onPress={props.handlePasswordIconClick}
+              style={styles.rightIcon}>
               {props.showPass ? <Eye /> : <EyeClose />}
             </TouchableOpacity>
           )}
@@ -145,7 +154,6 @@ const styles = StyleSheet.create({
   container: {
     width: '90%',
     backgroundColor: Colors.white,
-    height: 60,
     borderRadius: 14,
     flexDirection: 'row',
     alignItems: 'center',
@@ -156,8 +164,8 @@ const styles = StyleSheet.create({
       width: 0,
       height: 1,
     },
-    shadowOpacity: 0.20,
-    shadowRadius: 2.20,
+    shadowOpacity: 0.2,
+    shadowRadius: 2.2,
     elevation: 3,
   },
   inputContainer: {
