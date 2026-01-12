@@ -42,16 +42,22 @@ export interface Props {
 const TextInputComponent = (props: Props) => {
   const {black} = Colors;
   const [activeBorder, setActiveBorder] = useState<boolean | undefined>(false);
+  const [touched, setTouched] = useState(false);
   const textInputRef = useRef<TextInput>(null);
   const [text] = useState('');
+
+  // Don't show error styles until the user has interacted with the field
+  const showError = Boolean(props.errorMessage) && touched;
+
   const borderStyle = useMemo(
     () => ({
-      borderColor: props.errorMessage ? Colors.red : activeBorder
-        ? Colors.blue
-        : '#C4C4C4',
-      borderWidth: props.errorMessage ? 1.5 : activeBorder ? 1 : 0,
+      borderColor: showError
+        ? Colors.red
+        : activeBorder
+          ? Colors.blue
+          : '#C4C4C4',
     }),
-    [activeBorder, props.errorMessage],
+    [activeBorder, showError],
   );
 
    const backgroundColor = useMemo(
@@ -69,6 +75,14 @@ const TextInputComponent = (props: Props) => {
     new Animated.Value(text ? 1 : 0),
   ).current;
 
+  const sizeStyle = useMemo(() => {
+    return props.inputSize === 'small'
+      ? styles.sizeSmall
+      : props.inputSize === 'medium'
+        ? styles.sizeMedium
+        : styles.sizeLarge;
+  }, [props.inputSize]);
+
   useEffect(() => {
     if (props.defaultval) {
       Animated.timing(floatingLabelAnimation, {
@@ -81,6 +95,7 @@ const TextInputComponent = (props: Props) => {
 
   const handleBlur = (e: any) => {
     props.onBlur?.(e);
+    setTouched(true);
     if (!props.value) {
       Animated.timing(floatingLabelAnimation, {
         toValue: 0,
@@ -98,6 +113,7 @@ const TextInputComponent = (props: Props) => {
       useNativeDriver: false,
     }).start();
     setActiveBorder(true);
+    setTouched(true);
     props.onFocus?.();
   };
 
@@ -108,11 +124,7 @@ const TextInputComponent = (props: Props) => {
           style={[
             styles.container,
             props.containerStyle,
-            props.inputSize === 'small'
-              ? {height: 40}
-              : props.inputSize === 'medium'
-              ? {height: 54}
-              : {height: 60},
+            sizeStyle,
 
             borderStyle,
             backgroundColor,
@@ -121,7 +133,9 @@ const TextInputComponent = (props: Props) => {
           <TextInput
             style={[styles.inputContainer]}
             ref={textInputRef}
-            placeholderTextColor={props.placeholderColor || props.errorMessage ? Colors.red : Colors.gray}
+            placeholderTextColor={
+              props.placeholderColor ?? (showError ? Colors.red : Colors.gray)
+            }
             placeholder={props.placeholder}
             onChangeText={props.onChangeText}
             onFocus={handleFocus}
@@ -170,8 +184,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     alignSelf: 'center',
+    borderWidth: 1.5,
     ...Shadows.md,
   },
+  sizeSmall: {height: 40},
+  sizeMedium: {height: 54},
+  sizeLarge: {height: 60},
   inputContainer: {
     width: '85%',
     height: 56,

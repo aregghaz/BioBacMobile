@@ -3,11 +3,13 @@ import {useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import {GetPaymentCategory} from '@/services/Payment/PaymentCategory';
 import {GetCompanyAccount} from '@/services/Compny/Account';
-import {GetAccountResponse, GetPaymentTypeResponse} from '@/types';
+import {GetAccountResponse, GetPaymentTypeResponse, PaymentCategoryNode} from '@/types';
 import {useToast} from '@/component/toast/ToastProvider';
 import * as Yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useForm} from 'react-hook-form';
+
+type Option = {label: string; value: string};
 
 export default function usePayment() {
   const [showDate, setShowDate] = useState(false);
@@ -24,11 +26,9 @@ export default function usePayment() {
   );
   const [type, setType] = useState<GetPaymentTypeResponse[]>([]);
   const [typeFilterName, setTypeFilterName] = useState<string>('');
-  const [category, setCategory] = useState<{label: string; value: string}[]>(
-    [],
-  );
-  const [errorAccount, setErrorAccount] = useState<boolean>(false);
-
+  const [categoryLevels, setCategoryLevels] = useState<Option[][]>([]);
+  const [categoryPath, setCategoryPath] = useState<Option[]>([]);
+  const [visibleModal, setVisibleModal] = useState<boolean>(false);
 
 
   const [result, setResult] = useState<{
@@ -45,11 +45,20 @@ export default function usePayment() {
     categoryChild: '',
   });
 
-  const [categoryChild, setCategoryChild] = useState<
-    {label: string; value: string}[]
-  >([]);
+  const buildOptions = useCallback((nodes: PaymentCategoryNode[] = []): Option[] => {
+    return nodes.map(n => ({
+      label: n.name,
+      value: String(n.id ?? n.parentId ?? n.name),
+    }));
+  }, []);
+
+  const getRootCategories = useCallback((): PaymentCategoryNode[] => {
+    const res = type.find(item => item.root === typeFilterName);
+    return res?.categories ?? [];
+  }, [type, typeFilterName]);
 
   const validationSchema = Yup.object().shape({
+    account: Yup.string().trim().required('Required'),
     amount: Yup.string().trim().required('Required'),
     comment: Yup.string().trim().required('Required'),
   });
@@ -57,10 +66,11 @@ export default function usePayment() {
     control,
     handleSubmit,
     formState: {errors},
-    reset,
+    // reset,
     getValues,
   } = useForm({
     defaultValues: {
+      account: '',
       amount: '',
       comment: '',
     },
@@ -152,37 +162,65 @@ export default function usePayment() {
 
   // submit filter category
   const onSubmitFilterCategory = ({label}: {label: string}) => {
-    const res = type.find(item => item.root === typeFilterName);
-    const resultFilterCategory = res?.categories.map((item: {name: string; id: number}) => ({
-      label: item.name,
-      value: item.id.toString(),
-    }));
-    setCategory(resultFilterCategory ?? []);
-    setResult(prev => ({...prev, category: label}));
+    const rootCategories = getRootCategories();
+    const firstLevel = buildOptions(rootCategories);
+    setCategoryLevels(firstLevel.length > 0 ? [firstLevel] : []);
+    setCategoryPath([]);
+    // keep previous behavior of saving selected "list type" label
+    setResult(prev => ({...prev, category: label, categoryChild: ''}));
   };
 
-  // submit category child
-  const onSubmitCategoryChild = ({label}: {label: string}) => {
-    const res = type.find(item => item.root === typeFilterName);
-    const resCategory = res?.categories?.find((item: {name: string}) => item.name === label);
-    const resultFilterCategoryChild = resCategory?.children?.map(
-      (item: {name: string; parentId: number}) => ({
-        label: item.name,
-        value: item.parentId.toString(),
-      }),
-    );
-    setCategoryChild(resultFilterCategoryChild ?? []);
-    setResult(prev => ({...prev, categoryChild: label}));
-  };
+  const onSelectCategoryLevel = useCallback(
+    (levelIndex: number, selected: Option) => {
+      const nextPath = [...categoryPath.slice(0, levelIndex), selected];
+      setCategoryPath(nextPath);
+
+      // walk the tree using the selected values
+      let nodes: PaymentCategoryNode[] = getRootCategories();
+      let selectedNode: PaymentCategoryNode | undefined;
+
+      for (const step of nextPath) {
+        selectedNode = nodes.find(
+          n => String(n.id ?? n.parentId ?? n.name) === step.value,
+        );
+        nodes = selectedNode?.children ?? [];
+      }
+
+      const nextOptions = buildOptions(nodes);
+      setCategoryLevels(prev => {
+        const trimmed = prev.slice(0, levelIndex + 1);
+        return nextOptions.length > 0 ? [...trimmed, nextOptions] : trimmed;
+      });
+
+      // store leaf selection label path (useful for submit)
+      setResult(prev => ({
+        ...prev,
+        categoryChild: nextPath.map(x => x.label).join(' / '),
+      }));
+    },
+    [buildOptions, categoryPath, getRootCategories],
+  );
+
+ // onSubmit Discard
+ const onSubmitDiscard = () => {
+  setVisibleModal(true);
+ };
+
 
   // submit payment
   const onSubmit = () => {
     console.log('result', getValues());
-    // if (result.account === '') {
-    //   console.log('result.account', result.account);
-    //   setErrorAccount(true);
-    // }
   };
+
+ // onSubmit Cancel
+ const onSubmitCancel = () => {
+  setVisibleModal(false);
+ };
+
+ // onSubmit Confirm
+ const onSubmitConfirm = () => {
+  console.log('result', getValues());
+ };
 
   useFocusEffect(
     useCallback(() => {
@@ -202,17 +240,19 @@ export default function usePayment() {
     typeName,
     onSubmitFilterList,
     onSubmitFilterCategory,
-    onSubmitCategoryChild,
     listType,
-    category,
-    categoryChild,
+    categoryLevels,
+    categoryPath,
+    onSelectCategoryLevel,
     onSubmit,
     setResult,
     control,
     handleSubmit,
     errors,
     result,
-    errorAccount,
-    setErrorAccount
+    onSubmitDiscard,
+    visibleModal,
+    onSubmitCancel,
+    onSubmitConfirm,
   };
 }

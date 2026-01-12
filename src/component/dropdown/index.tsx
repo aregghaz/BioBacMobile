@@ -8,14 +8,14 @@ type DropdownComponentProps = {
   style?: ViewStyle;
   data: {label: string; value: string}[];
   onClick: (item: {label: string; value: string}) => void;
-  required?: boolean;
+  errorMessage?: string;
 };
 
 const DropdownComponent = ({
   style,
   data,
   onClick,
-  required,
+  errorMessage,
 }: DropdownComponentProps) => {
   const [value, setValue] = useState(null);
   const [_isFocused, setIsFocused] = useState(false);
@@ -52,12 +52,12 @@ const DropdownComponent = ({
         style={[
           styles.dropdown,
           {
-            borderColor: _isFocused ? Colors.blue : Colors.gray_200,
-            backgroundColor: required ? Colors.red_100 : Colors.white,
+            borderColor: _isFocused ? errorMessage ? Colors.red : Colors.blue : Colors.gray_200,
+            backgroundColor: errorMessage ? Colors.red_100 : Colors.white,
           },
           style,
         ]}
-        placeholderStyle={[styles.placeholderStyle, {color: required ? Colors.red : Colors.gray}]}
+        placeholderStyle={[styles.placeholderStyle, {color: errorMessage ? Colors.red : Colors.gray}]}
         selectedTextStyle={styles.selectedTextStyle}
         iconStyle={styles.iconStyle}
         iconColor={Colors.black}
@@ -80,7 +80,7 @@ const DropdownComponent = ({
         }}
         renderItem={renderItem}
       />
-      <Text style={styles.errorText}>{required ? 'Required' : ''}</Text>
+      <Text style={styles.errorText}>{errorMessage}</Text>
     </>
   );
 };

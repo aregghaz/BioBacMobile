@@ -9,28 +9,31 @@ interface ModalCardProps {
   isVisible: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  title?: string;
+  description?: string;
 }
 
-export default function ConfirmDeleteModal({
+export default function DefaultModal({
   isVisible,
   onClose,
   onConfirm,
+  title,
+  description,
 }: ModalCardProps) {
   return (
-    <BaseModal isVisible={isVisible} onClose={onClose} onConfirm={onConfirm}>
+    <BaseModal isVisible={isVisible} onClose={onClose} >
       <View style={styles.cardContainer}>
         <View style={styles.titleContainer}>
           <View style={styles.iconContainer}>
             <AntDesign name="warning" size={24} color={Colors.red} />
           </View>
-          <Text style={styles.title}>Remove companies</Text>
+          <Text style={styles.title}>{title}</Text>
           <View style={styles.closeContainer}>
             <MaterialIcons name="close" size={20} color={Colors.black} />
           </View>
         </View>
         <Text style={styles.description}>
-          Are you sure you want to remove this Ingredient? This action can't be
-          undo.
+          {description}
         </Text>
         <View style={styles.buttonContainer}>
           <Button

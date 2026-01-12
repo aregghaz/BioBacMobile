@@ -127,19 +127,15 @@ import type {Permission} from '@/permissions/engine';
     targetId: number;
   };
 
-  export type PaymentCategoryChild = {
+  export type PaymentCategoryNode = {
+    id?: number;
+    parentId?: number;
     name: string;
-    parentId: number;
-  };
-
-  export type PaymentCategory = {
-    id: number;
-    name: string;
-    children: PaymentCategoryChild[];
+    children?: PaymentCategoryNode[];
   };
 
   export type GetPaymentTypeResponse = {
     root: string;
     rootItems: PaymentRootItem[];
-    categories: PaymentCategory[];
+    categories: PaymentCategoryNode[];
   };

@@ -1,1 +1,1 @@
-export {default as ConfirmDeleteModal} from './ConfirmDeleteModal';
+export {default as DefaultModal} from './DefaultModal';

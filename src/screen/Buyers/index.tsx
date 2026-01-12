@@ -12,7 +12,7 @@ import {deviceHeight} from '@/helper';
 import VerticalFlatList from '@/component/list/VerticalFlatList';
 import {AllCompanyProps} from '@/types';
 import NotFound from '@/component/icons/NotFound';
-import {ConfirmDeleteModal} from '@/component/Modal';
+import {DefaultModal} from '@/component/Modal';
 import Filter from '@/component/Filter';
 import {t} from '@/locales';
 
@@ -74,10 +74,12 @@ export default function Buyers(route: Props) {
           />
         </>
       )}
-      <ConfirmDeleteModal
+      <DefaultModal
         isVisible={visible}
         onClose={onSubmitCancel}
         onConfirm={onSubmitConfirm}
+        title="Delete Company"
+        description="Are you sure you want to delete this company?"
       />
     </View>
   );

@@ -12,7 +12,8 @@ import TextInput from '@/component/input/TextInput';
 import Button from '@/component/button';
 import DateIcon from '@/component/icons/DateIcon';
 import moment from 'moment';
-import { Controller } from 'react-hook-form';
+import {Controller} from 'react-hook-form';
+import {DefaultModal} from '@/component/Modal';
 
 export default function Payment() {
   const {
@@ -26,16 +27,16 @@ export default function Payment() {
     onSubmitFilterList,
     listType,
     onSubmitFilterCategory,
-    onSubmitCategoryChild,
-    category,
-    categoryChild,
+    categoryLevels,
+    onSelectCategoryLevel,
     onSubmit,
-    setResult,
-    errorAccount,
     control,
     handleSubmit,
     errors,
-    setErrorAccount
+    onSubmitDiscard,
+    visibleModal,
+    onSubmitCancel,
+    onSubmitConfirm,
   } = usePayment();
   return (
     <View style={styles.container}>
@@ -53,14 +54,19 @@ export default function Payment() {
           icon={<DateIcon size={24} color={Colors.black} />}
         />
         <TextView title="Account" style={styles.marginTop} />
-        <DropdownComponent
-          style={styles.marginTop}
-          data={account}
-          onClick={({value}) => {
-            setResult(prev => ({...prev, account: value}));
-            setErrorAccount(false);
-          }}
-          required={errorAccount}
+        <Controller
+          control={control}
+          name="account"
+          render={({field: {onChange}}) => (
+            <DropdownComponent
+              style={styles.marginTop}
+              data={account}
+              onClick={({value}) => {
+                onChange(value);
+              }}
+              errorMessage={errors.account?.message}
+            />
+          )}
         />
         <Calender
           isVisible={showDate}
@@ -70,10 +76,10 @@ export default function Payment() {
         />
         <TextView title="Amount" style={styles.marginTop} />
         <Controller
-            control={control}
-            name="amount"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
+          control={control}
+          name="amount"
+          render={({field: {onChange, value}}) => (
+            <TextInput
               placeholder="0"
               containerStyle={styles.marginTop}
               inputSize="medium"
@@ -82,9 +88,9 @@ export default function Payment() {
               value={value}
               errorMessage={errors.amount?.message}
             />
-            )}
-          />
- 
+          )}
+        />
+
         <TextView title="Type" style={styles.marginTop} />
         <DropdownComponent
           style={styles.marginTop}
@@ -101,32 +107,26 @@ export default function Payment() {
             />
           </>
         )}
-        {category.length > 0 && (
-          <>
-            <TextView title="Category" style={styles.marginTop} />
-            <DropdownComponent
-              style={styles.marginTop}
-              data={category}
-              onClick={onSubmitCategoryChild}
-            />
-          </>
-        )}
-        {categoryChild.length > 0 && (
-          <>
-            <TextView title="Category Child" style={styles.marginTop} />
-            <DropdownComponent
-              style={styles.marginTop}
-              data={categoryChild}
-              onClick={() => console.log('categoryChild')}
-            />
-          </>
-        )}
+        {categoryLevels.length > 0 &&
+          categoryLevels.map((levelOptions, idx) => (
+            <React.Fragment key={`cat-level-${idx}`}>
+              <TextView
+                title={idx === 0 ? 'Category' : `Category Child ${idx}`}
+                style={styles.marginTop}
+              />
+              <DropdownComponent
+                style={styles.marginTop}
+                data={levelOptions}
+                onClick={item => onSelectCategoryLevel(idx, item)}
+              />
+            </React.Fragment>
+          ))}
         <TextView title="Comment" style={styles.marginTop} />
         <Controller
-            control={control}
-            name="comment"
-            render={({ field: { onChange, value } }) => (
-              <TextInput
+          control={control}
+          name="comment"
+          render={({field: {onChange, value}}) => (
+            <TextInput
               placeholder="Comment"
               containerStyle={styles.marginTop}
               inputSize="medium"
@@ -135,8 +135,8 @@ export default function Payment() {
               value={value}
               errorMessage={errors.comment?.message}
             />
-            )}
-          />
+          )}
+        />
       </ScrollView>
 
       {/* Fixed footer buttons */}
@@ -144,13 +144,24 @@ export default function Payment() {
         <View style={styles.buttonRow}>
           <Button
             title="Discard"
-            onHandler={() => {}}
+            onHandler={onSubmitDiscard}
             style={[styles.button, styles.discardButton]}
             textStyle={{color: Colors.red}}
           />
-          <Button title="Create" onHandler={handleSubmit(onSubmit)} style={styles.button} />
+          <Button
+            title="Create"
+            onHandler={handleSubmit(onSubmit)}
+            style={styles.button}
+          />
         </View>
       </View>
+      <DefaultModal
+        isVisible={visibleModal}
+        onClose={onSubmitCancel}
+        onConfirm={onSubmitConfirm}
+        title="Discard changes"
+        description="Are you sure you want discard this? This action can't be undo."
+      />
     </View>
   );
 }
