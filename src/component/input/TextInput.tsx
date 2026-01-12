@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Eye from '@/assets/svg/Eye.svg';
 import EyeClose from '@/assets/svg/EyeClose.svg';
-import {Colors} from '@/theme';
+import {Colors, FontFamily, Shadows} from '@/theme';
 export interface Props {
   defaultval?: string;
   keyboard?: any;
@@ -19,7 +19,7 @@ export interface Props {
   submitText?: any;
   edit?: boolean;
   value?: string;
-  showPass?: any;
+  showPass?: boolean;
   rightIcon?: any;
   leftIcon?: any;
   containerStyle?: object;
@@ -46,15 +46,24 @@ const TextInputComponent = (props: Props) => {
   const [text] = useState('');
   const borderStyle = useMemo(
     () => ({
-      borderColor: props.errorMessage
-        ? 'red'
-        : activeBorder
+      borderColor: props.errorMessage ? Colors.red : activeBorder
         ? Colors.blue
         : '#C4C4C4',
       borderWidth: props.errorMessage ? 1.5 : activeBorder ? 1 : 0,
     }),
     [activeBorder, props.errorMessage],
   );
+
+   const backgroundColor = useMemo(
+    () => ({
+      backgroundColor: props.errorMessage
+        ? Colors.red_100
+        : Colors.white,
+    }),
+    [props.errorMessage],
+  );
+
+
 
   const floatingLabelAnimation = useRef(
     new Animated.Value(text ? 1 : 0),
@@ -102,16 +111,17 @@ const TextInputComponent = (props: Props) => {
             props.inputSize === 'small'
               ? {height: 40}
               : props.inputSize === 'medium'
-              ? {height: 50}
+              ? {height: 54}
               : {height: 60},
 
             borderStyle,
+            backgroundColor,
           ]}>
           {props.leftIcon && <>{props.leftIcon}</>}
           <TextInput
             style={[styles.inputContainer]}
             ref={textInputRef}
-            placeholderTextColor={props.placeholderColor || 'gray'}
+            placeholderTextColor={props.placeholderColor || props.errorMessage ? Colors.red : Colors.gray}
             placeholder={props.placeholder}
             onChangeText={props.onChangeText}
             onFocus={handleFocus}
@@ -133,7 +143,7 @@ const TextInputComponent = (props: Props) => {
             onSubmitEditing={val => props.SubmitEditing?.(val)}
             onEndEditing={val => props.EndEditing?.(val)}
             onKeyPress={e => props.KeyPress?.(e.nativeEvent)}
-            secureTextEntry={!props.showPass}
+            secureTextEntry={props.showPass}
           />
           {props.rightIcon && (
             <TouchableOpacity
@@ -160,14 +170,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 2.2,
-    elevation: 3,
+    ...Shadows.md,
   },
   inputContainer: {
     width: '85%',
@@ -180,9 +183,10 @@ const styles = StyleSheet.create({
     fontFamily: 'DMSans-Medium',
   },
   textError: {
-    color: 'red',
+    color: Colors.red,
     marginTop: 10,
-    marginLeft: '8%',
+    marginLeft: '5%',
+    fontFamily: FontFamily.semiBold,
   },
   rightIcon: {
     marginLeft: 15,

@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
   text: {
-    fontSize: FontSizes.medium,
+    fontSize: FontSizes.small,
     fontFamily: FontFamily.regular,
     color: Colors.black,
   },

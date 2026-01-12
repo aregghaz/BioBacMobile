@@ -31,6 +31,7 @@ export default function Login() {
                 value={value}
                 errorMessage={errors.username?.message}
                 showPass={true}
+                inputSize="medium"
               />
             )}
           />
@@ -50,6 +51,7 @@ export default function Login() {
                 value={value}
                 errorMessage={errors.password?.message}
                 showPass={showPass}
+                inputSize="medium"
               />
             )}
           />

@@ -8,6 +8,9 @@ type Endpoints = {
   GetAllCompanies: string;
   GetCompanyHistory: string;
   DeleteCompany: string;
+  GetAssetInfoCategory: string;
+  GetPaymentCategory: string;
+  GetCompanyAccount: string;
 }
 
 export const endpoints:Endpoints = {
@@ -25,4 +28,12 @@ export const endpoints:Endpoints = {
   GetSeller: 'company/seller',
   GetCompanyHistory: 'company/company-history/',
   DeleteCompany: 'company/delete/',
+  GetCompanyAccount: 'company/account',
+
+
+  //payment
+  GetPaymentCategory: 'company/payment-category',
+
+  //info-controller
+  GetAssetInfoCategory: 'warehouse/asset-info/category',
 };

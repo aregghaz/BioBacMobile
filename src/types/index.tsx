@@ -106,3 +106,40 @@ import type {Permission} from '@/permissions/engine';
     amountChanged: number;
     note: string | null;
   }
+
+
+  export type GetAccountResponse = {
+    balance: number;
+    bankAccount: string;
+    bankName: string;
+    bik: string;
+    createdAt: string;
+    deleted: boolean;
+    id: number;
+    ks: string;
+    name: string;
+    ourCompanyId: number;
+    updatedAt: string;
+  }
+
+  export type PaymentRootItem = {
+    name: string;
+    targetId: number;
+  };
+
+  export type PaymentCategoryChild = {
+    name: string;
+    parentId: number;
+  };
+
+  export type PaymentCategory = {
+    id: number;
+    name: string;
+    children: PaymentCategoryChild[];
+  };
+
+  export type GetPaymentTypeResponse = {
+    root: string;
+    rootItems: PaymentRootItem[];
+    categories: PaymentCategory[];
+  };
