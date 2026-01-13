@@ -115,6 +115,8 @@ const Calender = ({
   onConfirm,
   onClose,
 }: BiobacCalendarProps) => {
+  const safeValue =
+    typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
   const today = useMemo(() => toISODate(new Date()), []);
   const [showDate, setShowDate] = useState(false);
   const effectiveMinDate =
@@ -127,13 +129,13 @@ const Calender = ({
   const effectiveMaxDate = maxDate ?? (disableFuture ? today : undefined);
 
   const [internalValue, setInternalValue] = useState<string | null>(
-    value ?? null,
+    safeValue ?? null,
   );
   useEffect(() => {
     if (value !== undefined) {
-      setInternalValue(value ?? null);
+      setInternalValue(safeValue ?? null);
     }
-  }, [value]);
+  }, [safeValue, value]);
 
   // show date picker
   useEffect(() => {
@@ -143,7 +145,7 @@ const Calender = ({
       setShowDate(false);
     }
   }, [isVisible]);
-  const selectedDate = value !== undefined ? value : internalValue;
+  const selectedDate = value !== undefined ? safeValue : internalValue;
   const initialDate = selectedDate ?? effectiveMaxDate ?? today;
 
   const [visibleMonth, setVisibleMonth] = useState<number>(() => {

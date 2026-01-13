@@ -1,4 +1,4 @@
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, KeyboardAvoidingView} from 'react-native';
 import React from 'react';
 import {Colors} from '@/theme';
 import Header from '@/navigation/Header';
@@ -29,6 +29,7 @@ export default function Payment() {
     onSubmitFilterCategory,
     categoryLevels,
     onSelectCategoryLevel,
+    categoryResetKey,
     onSubmit,
     control,
     handleSubmit,
@@ -37,8 +38,11 @@ export default function Payment() {
     visibleModal,
     onSubmitCancel,
     onSubmitConfirm,
+    onclearDate,
+    submitCount,
   } = usePayment();
   return (
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
     <View style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollViewContainer}
@@ -50,6 +54,7 @@ export default function Payment() {
           title={date}
           style={styles.marginTop}
           onPress={onOpenDate}
+          onClose={onclearDate}
           onBlur={showDate}
           icon={<DateIcon size={24} color={Colors.black} />}
         />
@@ -61,9 +66,7 @@ export default function Payment() {
             <DropdownComponent
               style={styles.marginTop}
               data={account}
-              onClick={({value}) => {
-                onChange(value);
-              }}
+              onClick={({value})=>onChange(value)}
               errorMessage={errors.account?.message}
             />
           )}
@@ -72,7 +75,11 @@ export default function Payment() {
           isVisible={showDate}
           onClose={() => onCloseDate()}
           onConfirm={onConfirmDate}
-          value={moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD')}
+          value={
+            moment(date, 'DD/MM/YYYY', true).isValid()
+              ? moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD')
+              : undefined
+          }
         />
         <TextView title="Amount" style={styles.marginTop} />
         <Controller
@@ -92,33 +99,74 @@ export default function Payment() {
         />
 
         <TextView title="Type" style={styles.marginTop} />
-        <DropdownComponent
-          style={styles.marginTop}
-          data={typeName}
-          onClick={onSubmitFilterList}
+        <Controller
+          control={control}
+          name="type"
+          render={({field: {onChange}}) => (
+            <DropdownComponent
+              style={styles.marginTop}
+              data={typeName}
+              onClick={item => {
+                onChange(item.value);
+                onSubmitFilterList(item);
+              }}
+              errorMessage={errors.type?.message}
+            />
+          )}
         />
         {listType.length > 0 && (
           <>
             <TextView title="List Of Type" style={styles.marginTop} />
-            <DropdownComponent
-              style={styles.marginTop}
-              data={listType}
-              onClick={onSubmitFilterCategory}
+            <Controller
+              control={control}
+              name="listType"
+              render={({field: {onChange}}) => (
+                <DropdownComponent
+                  style={styles.marginTop}
+                  data={listType}
+                  onClick={item => {
+                    onChange(item.value);
+                    onSubmitFilterCategory(item);
+                  }}
+                  search={true}
+                  errorMessage={submitCount > 0 ? errors.listType?.message : undefined}
+                />
+              )}
             />
           </>
         )}
         {categoryLevels.length > 0 &&
           categoryLevels.map((levelOptions, idx) => (
-            <React.Fragment key={`cat-level-${idx}`}>
+            <React.Fragment key={`cat-level-${categoryResetKey}-${idx}`}>
               <TextView
                 title={idx === 0 ? 'Category' : `Category Child ${idx}`}
                 style={styles.marginTop}
               />
-              <DropdownComponent
-                style={styles.marginTop}
-                data={levelOptions}
-                onClick={item => onSelectCategoryLevel(idx, item)}
-              />
+              {idx === 0 ? (
+                <Controller
+                  control={control}
+                  name="category0"
+                  render={({field: {onChange}}) => (
+                    <DropdownComponent
+                      key={`cat-dd-${categoryResetKey}-${idx}`}
+                      style={styles.marginTop}
+                      data={levelOptions}
+                      onClick={item => {
+                        onChange(item.value);
+                        onSelectCategoryLevel(idx, item);
+                      }}
+                      errorMessage={errors.category0?.message}
+                    />
+                  )}
+                />
+              ) : (
+                <DropdownComponent
+                  key={`cat-dd-${categoryResetKey}-${idx}`}
+                  style={styles.marginTop}
+                  data={levelOptions}
+                  onClick={item => onSelectCategoryLevel(idx, item)}
+                />
+              )}
             </React.Fragment>
           ))}
         <TextView title="Comment" style={styles.marginTop} />
@@ -138,7 +186,6 @@ export default function Payment() {
           )}
         />
       </ScrollView>
-
       {/* Fixed footer buttons */}
       <View style={styles.footer}>
         <View style={styles.buttonRow}>
@@ -163,6 +210,7 @@ export default function Payment() {
         description="Are you sure you want discard this? This action can't be undo."
       />
     </View>
+    </KeyboardAvoidingView>
   );
 }
 

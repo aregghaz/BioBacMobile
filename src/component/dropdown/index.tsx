@@ -9,6 +9,7 @@ type DropdownComponentProps = {
   data: {label: string; value: string}[];
   onClick: (item: {label: string; value: string}) => void;
   errorMessage?: string;
+  search?: boolean;
 };
 
 const DropdownComponent = ({
@@ -16,6 +17,7 @@ const DropdownComponent = ({
   data,
   onClick,
   errorMessage,
+  search = false,
 }: DropdownComponentProps) => {
   const [value, setValue] = useState(null);
   const [_isFocused, setIsFocused] = useState(false);
@@ -61,12 +63,14 @@ const DropdownComponent = ({
         selectedTextStyle={styles.selectedTextStyle}
         iconStyle={styles.iconStyle}
         iconColor={Colors.black}
+        search={search}
         data={data}
         activeColor={Colors.white}
         maxHeight={300}
         labelField="label"
         valueField="value"
         placeholder="Select..."
+        searchPlaceholder="Search..."
         value={value}
         onChange={item => {
           setValue(item.value);
@@ -80,7 +84,7 @@ const DropdownComponent = ({
         }}
         renderItem={renderItem}
       />
-      <Text style={styles.errorText}>{errorMessage}</Text>
+      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
     </>
   );
 };
@@ -93,7 +97,7 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.small,
     fontFamily: FontFamily.semiBold,
     marginLeft: '5%',
-    marginTop: 5,
+    marginTop:10
   },
   dropdown: {
     width: '93%',

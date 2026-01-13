@@ -3,11 +3,16 @@ import {useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import {GetPaymentCategory} from '@/services/Payment/PaymentCategory';
 import {GetCompanyAccount} from '@/services/Compny/Account';
-import {GetAccountResponse, GetPaymentTypeResponse, PaymentCategoryNode} from '@/types';
+import {
+  GetAccountResponse,
+  GetPaymentTypeResponse,
+  PaymentCategoryNode,
+} from '@/types';
 import {useToast} from '@/component/toast/ToastProvider';
 import * as Yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useForm} from 'react-hook-form';
+import { CreatePayment } from '@/services/Payment/CreatePayment';
 
 type Option = {label: string; value: string};
 
@@ -28,9 +33,13 @@ export default function usePayment() {
   const [typeFilterName, setTypeFilterName] = useState<string>('');
   const [categoryLevels, setCategoryLevels] = useState<Option[][]>([]);
   const [categoryPath, setCategoryPath] = useState<Option[]>([]);
+  const [selectedLeafCategory, setSelectedLeafCategory] = useState<Option | null>(
+    null,
+  );
+  const [categoryResetKey, setCategoryResetKey] = useState(0);
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
-
-
+  const [categoryName, setCategoryName] = useState<string>('');
+  const [listTypeId, setListTypeId] = useState<string>('');
   const [result, setResult] = useState<{
     date: string;
     account: string;
@@ -45,12 +54,15 @@ export default function usePayment() {
     categoryChild: '',
   });
 
-  const buildOptions = useCallback((nodes: PaymentCategoryNode[] = []): Option[] => {
-    return nodes.map(n => ({
-      label: n.name,
-      value: String(n.id ?? n.parentId ?? n.name),
-    }));
-  }, []);
+  const buildOptions = useCallback(
+    (nodes: PaymentCategoryNode[] = []): Option[] => {
+      return nodes.map(n => ({
+        label: n.name,
+        value: String(n.id ?? n.parentId ?? n.name),
+      }));
+    },
+    [],
+  );
 
   const getRootCategories = useCallback((): PaymentCategoryNode[] => {
     const res = type.find(item => item.root === typeFilterName);
@@ -61,27 +73,37 @@ export default function usePayment() {
     account: Yup.string().trim().required('Required'),
     amount: Yup.string().trim().required('Required'),
     comment: Yup.string().trim().required('Required'),
+    type: Yup.string().trim().required('Required'),
+    listType: Yup.string().trim().required('Required'),
+    category0: Yup.string().trim().required('Required'),
   });
   const {
     control,
     handleSubmit,
-    formState: {errors},
+    formState: {errors, submitCount},
     // reset,
     getValues,
+    setValue,
   } = useForm({
     defaultValues: {
       account: '',
       amount: '',
       comment: '',
+      type: '',
+      listType: '',
+      category0: '',
     },
     mode: 'onSubmit',
     resolver: yupResolver(validationSchema),
   });
 
-
   // open date picker
   const onOpenDate = () => {
     setShowDate(true);
+  };
+
+  const onclearDate = () => {
+    setDate('');
   };
 
   // close date picker (used by modal overlay)
@@ -132,10 +154,12 @@ export default function usePayment() {
     await GetCompanyAccount({
       onSuccess: res => {
         const {data} = res as {data: GetAccountResponse[]};
-        const accountOptions: {label: string; value: string}[] = data.map(item => ({
-          label: item.name,
-          value: item.id.toString(),
-        }));
+        const accountOptions: {label: string; value: string}[] = data.map(
+          item => ({
+            label: item.name,
+            value: item.id.toString(),
+          }),
+        );
         setAccount(accountOptions);
       },
       onError: error => {
@@ -147,7 +171,7 @@ export default function usePayment() {
     });
   }, [show]);
 
-  // submit filter list type
+  // submit filter list type (Type)
   const onSubmitFilterList = ({label}: {label: string}) => {
     const res = type.find(item => item.root === label);
     const resultFilterList = res?.rootItems.map(
@@ -158,22 +182,50 @@ export default function usePayment() {
     );
     setListType(resultFilterList ?? []);
     setTypeFilterName(label);
+    setCategoryName(label);
+
+    // reset dependent selections when Type changes
+    setListTypeId('');
+    setCategoryLevels([]);
+    setCategoryPath([]);
+    setSelectedLeafCategory(null);
+    setCategoryResetKey(k => k + 1);
+    setValue('listType', '');
+    setValue('category0', '');
   };
 
   // submit filter category
-  const onSubmitFilterCategory = ({label}: {label: string}) => {
+  const onSubmitFilterCategory = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: string;
+  }) => {
+    // list-of-type changed -> user must re-select categories
+    setCategoryResetKey(k => k + 1);
+    // reset required first category selection
+    setValue('category0', '');
     const rootCategories = getRootCategories();
     const firstLevel = buildOptions(rootCategories);
     setCategoryLevels(firstLevel.length > 0 ? [firstLevel] : []);
     setCategoryPath([]);
+    setSelectedLeafCategory(null);
     // keep previous behavior of saving selected "list type" label
     setResult(prev => ({...prev, category: label, categoryChild: ''}));
+    setListTypeId(value);
   };
 
+   // onSelect Category Level
   const onSelectCategoryLevel = useCallback(
     (levelIndex: number, selected: Option) => {
       const nextPath = [...categoryPath.slice(0, levelIndex), selected];
       setCategoryPath(nextPath);
+      // last chosen item (leaf will always be the latest selected)
+      setSelectedLeafCategory(selected);
+      if (levelIndex === 0) {
+        setValue('category0', selected.value, {shouldValidate: true});
+      }
 
       // walk the tree using the selected values
       let nodes: PaymentCategoryNode[] = getRootCategories();
@@ -198,29 +250,61 @@ export default function usePayment() {
         categoryChild: nextPath.map(x => x.label).join(' / '),
       }));
     },
-    [buildOptions, categoryPath, getRootCategories],
+    [buildOptions, categoryPath, getRootCategories, setValue],
   );
 
- // onSubmit Discard
- const onSubmitDiscard = () => {
-  setVisibleModal(true);
- };
-
+  // onSubmit Discard
+  const onSubmitDiscard = () => {
+    setVisibleModal(true);
+  };
 
   // submit payment
   const onSubmit = () => {
-    console.log('result', getValues());
+    console.log(
+      'data',
+      date,
+      getValues().account,
+      getValues().amount,
+      getValues().comment,
+      categoryName,
+      listTypeId,
+      selectedLeafCategory?.value,
+    );
+    CreatePayment(
+      {
+        accountId: Number(getValues().account),
+        category: categoryName,
+        date: `${date}:23:59:00`,
+        notes: getValues().comment,
+        paymentCategoryId: Number(selectedLeafCategory?.value ?? 0),
+        sum: Number(getValues().amount),
+        targetId: Number(listTypeId),
+      },
+      {
+        onSuccess: () => {
+          show('Payment created successfully', {type: 'success'});
+        },
+        onError: error => {
+          show((error as Error)?.message ?? 'Error', {type: 'error'});
+        },
+        onUnauthorized: error => {
+          show((error as Error)?.message ?? 'Unauthorized', {type: 'error'});
+        },
+      },
+    );
   };
 
- // onSubmit Cancel
- const onSubmitCancel = () => {
-  setVisibleModal(false);
- };
+  // onSubmit modal Cancel
+  const onSubmitCancel = () => {
+    setVisibleModal(false);
+  };
 
- // onSubmit Confirm
- const onSubmitConfirm = () => {
-  console.log('result', getValues());
- };
+  // onSubmit modal Confirm
+  const onSubmitConfirm = () => {
+    console.log(
+      'result',
+    );
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -244,6 +328,8 @@ export default function usePayment() {
     categoryLevels,
     categoryPath,
     onSelectCategoryLevel,
+    selectedLeafCategory,
+    categoryResetKey,
     onSubmit,
     setResult,
     control,
@@ -254,5 +340,7 @@ export default function usePayment() {
     visibleModal,
     onSubmitCancel,
     onSubmitConfirm,
+    onclearDate,
+    submitCount,
   };
 }

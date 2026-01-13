@@ -30,7 +30,6 @@ export default function Login() {
                 onChangeText={onChange}
                 value={value}
                 errorMessage={errors.username?.message}
-                showPass={true}
                 inputSize="medium"
               />
             )}
@@ -50,7 +49,7 @@ export default function Login() {
                 onChangeText={onChange}
                 value={value}
                 errorMessage={errors.password?.message}
-                showPass={showPass}
+                showPass={!showPass}
                 inputSize="medium"
               />
             )}

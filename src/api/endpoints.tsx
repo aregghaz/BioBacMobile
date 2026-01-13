@@ -11,6 +11,7 @@ type Endpoints = {
   GetAssetInfoCategory: string;
   GetPaymentCategory: string;
   GetCompanyAccount: string;
+  CreatePayment: string;
 }
 
 export const endpoints:Endpoints = {
@@ -33,6 +34,7 @@ export const endpoints:Endpoints = {
 
   //payment
   GetPaymentCategory: 'company/payment-category',
+  CreatePayment: 'company/payment',
 
   //info-controller
   GetAssetInfoCategory: 'warehouse/asset-info/category',
