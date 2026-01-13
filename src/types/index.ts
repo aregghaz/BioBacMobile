@@ -158,3 +158,28 @@ export type GetPaymentResponse = {
   sum: number;
   targetId: number;
 }
+
+export type GetPaymentAllResponse = {
+    createdAt: string;
+    updatedAt: string;
+    id: number;
+    date: string;
+    account: GetAccountResponse;
+    paymentCategory: {
+        createdAt: string;
+        updatedAt: string;
+        id: number;
+        parentId: number | null;
+        parent: PaymentCategoryNode | null;
+        name: string;
+        category: string;
+        children: PaymentCategoryNode[];
+        state: string;
+    },
+    notes: string;
+    sum: number;
+    targetType: string;
+    target: string;
+    username: string;
+
+}

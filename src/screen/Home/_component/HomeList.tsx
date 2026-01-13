@@ -3,7 +3,12 @@ import React from 'react';
 import {Colors} from '@/theme/Colors';
 import {FontFamily, FontSizes, Shadows} from '@/theme';
 import {HomeListProps} from '@/types';
-import {ApartmentIcon, BusinessIcon, NotFound, UserSvgIcon} from '@/component/icons';
+import {
+  ApartmentIcon,
+  BusinessIcon,
+  NotFound,
+  UserSvgIcon,
+} from '@/component/icons';
 import {t} from '@/locales';
 import {PaymentIcon} from '@/component/icons';
 export default function HomeList({
@@ -30,7 +35,17 @@ export default function HomeList({
       onPress={() => onCallback(item)}
       style={styles.groupRow}>
       <SvgIcon size={item.iconSize ?? 40} color={Colors.black} />
-      <Text style={styles.groupTitle}>{item.label === 'buyers' ? t('company.companyBuyerList') : item.label === 'sellers' ? t('company.companiesSellerList') : item.label === 'payment' ? t('company.companiesPaymentList') : 'other'}</Text>
+      <Text style={styles.groupTitle}>
+        {item.label === 'buyers'
+          ? t('company.companyBuyerList')
+          : item.label === 'sellers'
+          ? t('company.companiesSellerList')
+          : item.label === 'payment'
+          ? t('company.companiesPayment')
+          : item.label === 'payment history'
+          ? t('company.companiesPaymentHistory')
+          : 'other'}
+      </Text>
     </TouchableOpacity>
   );
 }

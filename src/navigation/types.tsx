@@ -14,6 +14,7 @@ export type RootStackParamList = {
   HistoryBuyers: {item: historyProps};
   Payment: undefined;
   Settings: undefined;
+  PaymentHistory: undefined;
 };
 
 export type TabParamList = {

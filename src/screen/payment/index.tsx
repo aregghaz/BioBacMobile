@@ -48,7 +48,6 @@ export default function Payment() {
         contentContainerStyle={styles.scrollViewContainer}
         showsVerticalScrollIndicator={false}>
         <Header title={t('payment')} showBack={true} />
-
         <TextView title="Date" style={styles.marginTop} />
         <TouchableView
           title={date}
@@ -62,10 +61,11 @@ export default function Payment() {
         <Controller
           control={control}
           name="account"
-          render={({field: {onChange}}) => (
+          render={({field: {onChange, value: accountValue}}) => (
             <DropdownComponent
               style={styles.marginTop}
               data={account}
+              value={accountValue}
               onClick={({value})=>onChange(value)}
               errorMessage={errors.account?.message}
             />
@@ -81,31 +81,15 @@ export default function Payment() {
               : undefined
           }
         />
-        <TextView title="Amount" style={styles.marginTop} />
-        <Controller
-          control={control}
-          name="amount"
-          render={({field: {onChange, value}}) => (
-            <TextInput
-              placeholder="0"
-              containerStyle={styles.marginTop}
-              inputSize="medium"
-              keyboard="numeric"
-              onChangeText={onChange}
-              value={value}
-              errorMessage={errors.amount?.message}
-            />
-          )}
-        />
-
         <TextView title="Type" style={styles.marginTop} />
         <Controller
           control={control}
           name="type"
-          render={({field: {onChange}}) => (
+          render={({field: {onChange, value}}) => (
             <DropdownComponent
               style={styles.marginTop}
               data={typeName}
+              value={value}
               onClick={item => {
                 onChange(item.value);
                 onSubmitFilterList(item);
@@ -120,10 +104,11 @@ export default function Payment() {
             <Controller
               control={control}
               name="listType"
-              render={({field: {onChange}}) => (
+              render={({field: {onChange, value}}) => (
                 <DropdownComponent
                   style={styles.marginTop}
                   data={listType}
+                  value={value}
                   onClick={item => {
                     onChange(item.value);
                     onSubmitFilterCategory(item);
@@ -146,11 +131,12 @@ export default function Payment() {
                 <Controller
                   control={control}
                   name="category0"
-                  render={({field: {onChange}}) => (
+                  render={({field: {onChange, value}}) => (
                     <DropdownComponent
                       key={`cat-dd-${categoryResetKey}-${idx}`}
                       style={styles.marginTop}
                       data={levelOptions}
+                      value={value}
                       onClick={item => {
                         onChange(item.value);
                         onSelectCategoryLevel(idx, item);
@@ -169,6 +155,22 @@ export default function Payment() {
               )}
             </React.Fragment>
           ))}
+          <TextView title="Amount" style={styles.marginTop} />
+         <Controller
+          control={control}
+          name="amount"
+          render={({field: {onChange, value}}) => (
+            <TextInput
+              placeholder="0"
+              containerStyle={styles.marginTop}
+              inputSize="medium"
+              keyboard="numeric"
+              onChangeText={onChange}
+              value={value}
+              errorMessage={errors.amount?.message}
+            />
+          )}
+        />
         <TextView title="Comment" style={styles.marginTop} />
         <Controller
           control={control}

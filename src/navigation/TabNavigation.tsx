@@ -8,9 +8,11 @@ import Feather from 'react-native-vector-icons/Feather';
 import type {RootStackParamList, TabParamList} from './types';
 //-------------Home----------------
 import Home from '@/screen/Home';
+
 //-------------Buyers----------------
 import Buyers from '@/screen/Buyers';
 import HistoryBuyers from '@/screen/Buyers/HistoryBuyers';
+
 //-------------Seller----------------
 import Seller from '@/screen/Seller';
 import History from '@/screen/Seller/History';
@@ -20,7 +22,7 @@ import Settings from '@/screen/Settings';
 
 //-------------Payment----------------
 import Payment from '@/screen/payment';
-
+import PaymentHistory from '@/screen/payment/PaymentHistory';
 
 import { deviceHeight } from '@/helper';
 import { FontFamily } from '@/theme';
@@ -117,6 +119,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen name="History" component={History} />
       <HomeStack.Screen name="HistoryBuyers" component={HistoryBuyers} />
       <HomeStack.Screen name="Payment" component={Payment} />
+      <HomeStack.Screen name="PaymentHistory" component={PaymentHistory} />
     </HomeStack.Navigator>
   );
 };

@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react';
-import {useFocusEffect} from '@react-navigation/native';
+import {NavigationProp, useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import {GetPaymentCategory} from '@/services/Payment/PaymentCategory';
 import {GetCompanyAccount} from '@/services/Compny/Account';
@@ -13,10 +13,13 @@ import * as Yup from 'yup';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useForm} from 'react-hook-form';
 import { CreatePayment } from '@/services/Payment/CreatePayment';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/navigation/types';
 
 type Option = {label: string; value: string};
 
 export default function usePayment() {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [showDate, setShowDate] = useState(false);
   const {show} = useToast();
   const [date, setDate] = useState<string>(
@@ -81,7 +84,7 @@ export default function usePayment() {
     control,
     handleSubmit,
     formState: {errors, submitCount},
-    // reset,
+    reset,
     getValues,
     setValue,
   } = useForm({
@@ -260,16 +263,6 @@ export default function usePayment() {
 
   // submit payment
   const onSubmit = () => {
-    console.log(
-      'data',
-      date,
-      getValues().account,
-      getValues().amount,
-      getValues().comment,
-      categoryName,
-      listTypeId,
-      selectedLeafCategory?.value,
-    );
     CreatePayment(
       {
         accountId: Number(getValues().account),
@@ -282,7 +275,26 @@ export default function usePayment() {
       },
       {
         onSuccess: () => {
+          // clear selections but keep date + loaded dropdown data
+          setAccount([]);
+           setTypeName([]);
+          setListType([]);
+          setCategoryLevels([]);
+          setCategoryPath([]);
+          setSelectedLeafCategory(null);
+          setCategoryResetKey(k => k + 1);
+          setCategoryName('');
+          setListTypeId('');
+          reset({
+            account: '',
+            amount: '',
+            comment: '',
+            type: '',
+            listType: '',
+            category0: '',
+          });
           show('Payment created successfully', {type: 'success'});
+          navigation.navigate('PaymentHistory');
         },
         onError: error => {
           show((error as Error)?.message ?? 'Error', {type: 'error'});

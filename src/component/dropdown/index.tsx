@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {StyleSheet, View, Text, ViewStyle} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
 import {Feather} from '@/component/icons/VectorIcon';
@@ -10,6 +10,7 @@ type DropdownComponentProps = {
   onClick: (item: {label: string; value: string}) => void;
   errorMessage?: string;
   search?: boolean;
+  value?: string | null;
 };
 
 const DropdownComponent = ({
@@ -18,11 +19,23 @@ const DropdownComponent = ({
   onClick,
   errorMessage,
   search = false,
+  value: valueProp,
 }: DropdownComponentProps) => {
-  const [value, setValue] = useState(null);
+  const isControlled = valueProp !== undefined;
+  const [internalValue, setInternalValue] = useState<string | null>(null);
+  useEffect(() => {
+    if (isControlled) {
+      setInternalValue(valueProp ?? null);
+    }
+  }, [isControlled, valueProp]);
+
+  const selectedValue = useMemo(() => {
+    return isControlled ? (valueProp ?? null) : internalValue;
+  }, [internalValue, isControlled, valueProp]);
+
   const [_isFocused, setIsFocused] = useState(false);
   const renderItem = (item: {label: string; value: string}) => {
-    const isSelected = item.value === value;
+    const isSelected = item.value === selectedValue;
     return (
       <View
         style={[
@@ -36,7 +49,7 @@ const DropdownComponent = ({
           ]}>
           {item.label}
         </Text>
-        {item.value === value && (
+        {item.value === selectedValue && (
           <Feather
             style={styles.icon}
             color={Colors.blue}
@@ -71,9 +84,11 @@ const DropdownComponent = ({
         valueField="value"
         placeholder="Select..."
         searchPlaceholder="Search..."
-        value={value}
+        value={selectedValue}
         onChange={item => {
-          setValue(item.value);
+          if (!isControlled) {
+            setInternalValue(item.value);
+          }
           onClick(item);
         }}
         onFocus={() => {
@@ -97,7 +112,7 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.small,
     fontFamily: FontFamily.semiBold,
     marginLeft: '5%',
-    marginTop:10
+    marginTop: 10,
   },
   dropdown: {
     width: '93%',

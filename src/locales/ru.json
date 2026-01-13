@@ -2,7 +2,9 @@
   "company":{
     "companyBuyerList": "Покупатели",
     "companiesSellerList": "Продавцы",
-    "companiesPaymentList": "Платежи"
+    "companiesPayment": "Платежи",
+    "companiesPaymentHistory": "История платежей"
+
 
   },
   "common": {
@@ -17,7 +19,14 @@
     "Filter": "Фильтр",
     "amountChanged": "Изменение суммы",
     "note": "ПРИМЕЧАНИЕ",
-    "actionTime": "Время действий"
+    "actionTime": "Время действий",
+    "account": "АККАУНТ",
+    "parentCategory": "Родительская категория",
+    "category": "Категория",
+    "username": "Имя пользователя",
+    "date": "Дата",
+    "sum": "Сумма"
+
   },
   "settings": {
     "title": "Настройки",

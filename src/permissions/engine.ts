@@ -28,7 +28,7 @@ export type OrderedGroup = {
   items: ReadonlyArray<ComparedPermission>;
 };
 
-export const DEFAULT_GROUP_ORDER = ['BUYER', 'SELLER', 'PAYMENT', 'COMPANY', 'USER', 'OTHER'] as const;
+export const DEFAULT_GROUP_ORDER = ['BUYER', 'SELLER', 'PAYMENT', 'PAYMENT_HISTORY', 'COMPANY', 'USER', 'OTHER'] as const;
 
 /**
  * Convert grouped object to a stable ordered array.
@@ -89,6 +89,9 @@ function inferGroupName(name: string): string {
   }
   if (n.includes('PAYMENT')) {
     return 'PAYMENT';
+  }
+  if (n.includes('PAYMENT_HISTORY')) {
+    return 'PAYMENT_HISTORY';
   }
   if (n.includes('USER')) {
     return 'USER';
@@ -152,6 +155,9 @@ export function buildPermissionEngine(args: {
     }
     if (n.includes('PAYMENT')) {
       pushUnique('PAYMENT', p);
+    }
+    if (n.includes('PAYMENT_HISTORY')) {
+      pushUnique('PAYMENT_HISTORY', p);
     }
     if (n.includes('USER')) {
       pushUnique('USER', p);

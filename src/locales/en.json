@@ -2,7 +2,8 @@
   "company":{
     "companyBuyerList": "Buyers",
     "companiesSellerList": "Sellers",
-    "companiesPaymentList": "Payment"
+    "companiesPayment": "Payment",
+    "companiesPaymentHistory": "Payment History"
   },
   "common": {
     "ok": "Ok",
@@ -16,7 +17,13 @@
     "Filter": "Filter",
     "amountChanged": "Amount Changed",
     "note": "Note",
-    "actionTime": "Action Time"
+    "actionTime": "Action Time",
+    "account": "Account",
+    "parentCategory": "Parent Category",
+    "category": "Category",
+    "username": "User Name",
+    "date": "Date",
+    "sum": "Sum"
     
   },
   "settings": {

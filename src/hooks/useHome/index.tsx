@@ -31,7 +31,7 @@ export default function useHome() {
           fullPermissions: permissions,
           userPermissions: data.permissions,
         });
-        const groupsData = orderGrouped(result.grouped, ['BUYER', 'SELLER', 'PAYMENT'], {
+        const groupsData = orderGrouped(result.grouped, ['BUYER', 'SELLER', 'PAYMENT', 'PAYMENT_HISTORY'], {
           includeEmpty: true,
         }).map(g => {
           const enabled = g.items.filter(x => x.has).length;
@@ -119,6 +119,9 @@ export default function useHome() {
           break;
         case 'PAYMENT':
           navigation.navigate('Payment');
+          break;
+        case 'PAYMENT_HISTORY':
+          navigation.navigate('PaymentHistory');
           break;
         default:
           console.warn(`Unknown home item key: ${item.key}`);
