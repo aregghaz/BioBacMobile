@@ -163,7 +163,7 @@ const TextInputComponent = (props: Props) => {
             <TouchableOpacity
               onPress={props.handlePasswordIconClick}
               style={styles.rightIcon}>
-              {props.showPass ? <Eye /> : <EyeClose />}
+              {props.showPass ?<EyeClose /> :  <Eye /> }
             </TouchableOpacity>
           )}
         </View>

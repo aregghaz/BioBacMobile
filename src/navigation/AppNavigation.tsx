@@ -1,12 +1,13 @@
 // src/navigation/Navigation.js
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {StatusBar, View, Text} from 'react-native';
+import {StatusBar} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {StyleSheet} from 'react-native';
 import { SafeAreaProvider,SafeAreaView } from 'react-native-safe-area-context';
 import type {RootStackParamList} from './types';
-const NetInfo = require('@react-native-community/netinfo');
+import { OfflineBanner } from '@/component/OffliceBanner';
+import useNetworkStore from '@/zustland/networkStore';
 
 import Splash from '@/screen/Splash';
 //-------------Auth----------------
@@ -18,32 +19,18 @@ import { Colors } from '@/theme/Colors';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function OfflineBanner() {
-  return (
-    <View style={offlineStyles.banner}>
-      <Text style={offlineStyles.text}>No internet connection</Text>
-    </View>
-  );
-}
+
 
 export default function AppNavigation() {
-  const [isConnected, setIsConnected] = React.useState<boolean | null>(true);
-
-  React.useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state: any) => {
-      const connected = state.isConnected && state.isInternetReachable !== false;
-      setIsConnected(Boolean(connected));
-    });
-    return unsubscribe;
-  }, []);
+  const isConnected = useNetworkStore(s => s.isConnected);
 
   return (
     <SafeAreaProvider>
       <SafeAreaView
         style={styles.container}
         >
+          {isConnected === false && <OfflineBanner /> }
         <StatusBar barStyle="dark-content" />
-        {isConnected === false && <OfflineBanner />}
         <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown: false ,gestureEnabled: false}}>
             <Stack.Screen name="Splash" component={Splash}/>
@@ -51,6 +38,7 @@ export default function AppNavigation() {
             <Stack.Screen name="Tabs" component={Tabs}/>
           </Stack.Navigator>
         </NavigationContainer>
+        
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -59,19 +47,7 @@ export default function AppNavigation() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:Colors.white
+    backgroundColor:Colors.background
   },
 });
 
-const offlineStyles = StyleSheet.create({
-  banner: {
-    backgroundColor: '#D93025',
-    paddingVertical: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-});

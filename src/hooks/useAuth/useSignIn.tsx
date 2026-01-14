@@ -61,6 +61,7 @@ export default function useSignIn() {
     },
     onError: () => {
       setLoading(false);
+ 
     },
   });
 }, [setPermissions, navigation, reset, setIsLoggedIn]);
@@ -89,8 +90,10 @@ export default function useSignIn() {
           const {message} = data as {message: string};
           show(message, {type: 'error'});
         },
-        onError:() => {
+        onError:(error) => {
           setLoading(false);
+          // show(error.message, {type: 'error'});
+          console.log('error', error);
         },
       });
     },

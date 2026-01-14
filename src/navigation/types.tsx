@@ -15,12 +15,22 @@ export type RootStackParamList = {
   Payment: undefined;
   Settings: undefined;
   PaymentHistory: undefined;
+  Draft: undefined;
 };
 
 export type TabParamList = {
   HomeScreen: undefined;
   SettingsScreen: undefined;
+  DraftScreen: undefined;
 };
 
 
-
+export type DraftParamList = {
+  accountId: number,
+  category: string,
+  date: string;
+  notes: string,
+  paymentCategoryId: number,
+  sum: number,
+  targetId: number,
+};

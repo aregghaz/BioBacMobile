@@ -15,6 +15,7 @@ import {useForm} from 'react-hook-form';
 import { CreatePayment } from '@/services/Payment/CreatePayment';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/navigation/types';
+import useRefetchOnReconnect from '@/hooks/useRefetchOnReconnect';
 
 type Option = {label: string; value: string};
 
@@ -80,6 +81,8 @@ export default function usePayment() {
     listType: Yup.string().trim().required('Required'),
     category0: Yup.string().trim().required('Required'),
   });
+
+  
   const {
     control,
     handleSubmit,
@@ -143,11 +146,9 @@ export default function usePayment() {
         setTypeName(typeOptions);
         setType(data);
       },
-      onError: error => {
-        console.log('error', error);
+      onError: () => {
       },
-      onUnauthorized: error => {
-        console.log('error', error);
+      onUnauthorized: () => {
       },
     });
   }, []);
@@ -169,7 +170,7 @@ export default function usePayment() {
         show((error as Error).message, {type: 'error'});
       },
       onUnauthorized: error => {
-        console.log('error', error);
+        console.log('unauthorized', error);
       },
     });
   }, [show]);
@@ -300,7 +301,7 @@ export default function usePayment() {
           show((error as Error)?.message ?? 'Error', {type: 'error'});
         },
         onUnauthorized: error => {
-          show((error as Error)?.message ?? 'Unauthorized', {type: 'error'});
+          console.log('unauthorized', error);
         },
       },
     );
@@ -324,6 +325,11 @@ export default function usePayment() {
       getCompanyAccount();
     }, [getPaymentCategory, getCompanyAccount]),
   );
+
+  useRefetchOnReconnect(() => {
+    getPaymentCategory();
+    getCompanyAccount();
+  });
 
   return {
     date,

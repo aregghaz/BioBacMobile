@@ -43,7 +43,9 @@ export async function requestWithStatus<TResponse extends object>(
       console.log('Unauthorized',data);
       return {ok: false, status: 401, error: err, data};
     }
-    console.log('Error',err);
+    if(err instanceof Error && err.message.includes('Network Error')) {
+    }
+    console.log('Error',status);
     callbacks.onError?.(err, status);
     return {ok: false, status: status ?? 0, error: err};
   }

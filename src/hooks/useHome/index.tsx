@@ -11,6 +11,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '@/navigation/types';
 import {refreshTokenService} from '@/services/AuthService/RefreshToken';
 import useAuthStore from '@/zustland/authStore';
+import useRefetchOnReconnect from '../useRefetchOnReconnect';
 
 export default function useHome() {
   const [loading, setLoading] = useState(false);
@@ -135,6 +136,9 @@ export default function useHome() {
       getProfile();
     }, [getProfile])
   );
+
+  useRefetchOnReconnect(getProfile);
+
 
   return {
     loading,

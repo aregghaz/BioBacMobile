@@ -2,8 +2,7 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import type {BottomTabBarButtonProps} from '@react-navigation/bottom-tabs';
 import {Platform, Pressable} from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Feather from 'react-native-vector-icons/Feather';
+import { MaterialIcons, AntDesign, Feather} from '@/component/icons/VectorIcon';
 
 import type {RootStackParamList, TabParamList} from './types';
 //-------------Home----------------
@@ -24,6 +23,10 @@ import Settings from '@/screen/Settings';
 import Payment from '@/screen/payment';
 import PaymentHistory from '@/screen/payment/PaymentHistory';
 
+
+//-------------Draft----------------
+import Draft from '@/screen/Draft';
+
 import { deviceHeight } from '@/helper';
 import { FontFamily } from '@/theme';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -34,7 +37,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 const Tab = createBottomTabNavigator<TabParamList>();
 const HomeStack = createNativeStackNavigator<RootStackParamList>();
 const SettingsStack = createNativeStackNavigator<RootStackParamList>();
-
+const DraftStack = createNativeStackNavigator<RootStackParamList>();
 const baseScreenOptions = {
   headerShown: false,
   lazy: true,
@@ -89,7 +92,9 @@ function TabBarIcon({
   if (routeName === 'HomeScreen') {
     return <AntDesign name="home" size={size} color={color} />;
   }
-
+  if (routeName === 'DraftScreen') {
+    return <MaterialIcons name="access-time" size={size} color={color} />;
+  }
   // Settings tab (Ionicons)
   return (
     <Feather
@@ -124,6 +129,16 @@ const HomeStackScreen = () => {
   );
 };
 
+const DraftStackScreen = () => {
+  return (
+    <DraftStack.Navigator screenOptions={{headerShown: false}}>
+      <DraftStack.Screen name="Draft" component={Draft} />
+    </DraftStack.Navigator>
+  );
+};
+
+
+
 const SettingStackScreen = () => {
   return (
     <SettingsStack.Navigator screenOptions={{headerShown: false}}>
@@ -138,6 +153,7 @@ export default function TabNavigation() {
     <Tab.Navigator
       screenOptions={screenOptions}>
       <Tab.Screen name="HomeScreen" component={HomeStackScreen} />
+      <Tab.Screen name="DraftScreen" component={DraftStackScreen} />
       <Tab.Screen name="SettingsScreen" component={SettingStackScreen} />
     </Tab.Navigator>
   );
