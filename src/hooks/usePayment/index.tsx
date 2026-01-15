@@ -15,12 +15,14 @@ import {useForm} from 'react-hook-form';
 import { CreatePayment } from '@/services/Payment/CreatePayment';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/navigation/types';
-import useRefetchOnReconnect from '@/hooks/useRefetchOnReconnect';
+import useNetworkStore from '@/zustland/networkStore';
+import useRefetchOnReconnect from '../useRefetchOnReconnect';
 
 type Option = {label: string; value: string};
 
 export default function usePayment() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const isConnected = useNetworkStore(s => s.isConnected);
   const [showDate, setShowDate] = useState(false);
   const {show} = useToast();
   const [date, setDate] = useState<string>(
@@ -264,6 +266,7 @@ export default function usePayment() {
 
   // submit payment
   const onSubmit = () => {
+    isConnected &&
     CreatePayment(
       {
         accountId: Number(getValues().account),
@@ -326,11 +329,9 @@ export default function usePayment() {
     }, [getPaymentCategory, getCompanyAccount]),
   );
 
-  useRefetchOnReconnect(() => {
-    getPaymentCategory();
-    getCompanyAccount();
-  });
+  useRefetchOnReconnect(getCompanyAccount);
 
+  // useRefetchOnReconnect(getCompanyAccount);
   return {
     date,
     showDate,

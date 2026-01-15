@@ -8,7 +8,8 @@ import Activity from '@/component/activityIndicator';
 import {HomeListProps} from '@/types';
 
 export default function Home() {
-  const {groups, loading, navigateToDetail} = useHome();
+  const {groups, loading, navigateToDetail, groupsStore, isConnected} =
+    useHome();
   return (
     <View style={styles.container}>
       {loading ? (
@@ -16,7 +17,7 @@ export default function Home() {
       ) : (
         <View style={styles.linstContainer}>
           <VerticalFlatList
-            data={groups}
+            data={isConnected ? groups : groupsStore}
             gap={10}
             columns={2}
             keyExtractor={item => item.key}

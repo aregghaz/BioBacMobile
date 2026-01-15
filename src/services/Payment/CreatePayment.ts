@@ -9,7 +9,6 @@ export const CreatePayment = async <T extends object>(
   data: CreatePaymentRequest,
   result: CreatePaymentCallbacks<T> = {},
 ): Promise<CreatePaymentResult<T>> => {
-  console.log('CreatePayment',data);
   return requestWithStatus<T>({
     config: {
       method: 'POST',

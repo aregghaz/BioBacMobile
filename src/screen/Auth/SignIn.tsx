@@ -26,7 +26,6 @@ export default function Login() {
                 containerStyle={styles.inputContainerSmallMargin}
                 onBlur={onBlur}
                 placeholder={'Username'}
-                handlePasswordIconClick={() => console.log()}
                 onChangeText={onChange}
                 value={value}
                 errorMessage={errors.username?.message}

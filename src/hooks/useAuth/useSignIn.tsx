@@ -50,7 +50,7 @@ export default function useSignIn() {
  // get all permissions //
  const getAllPermissions = useCallback(async () => {
   setLoading(true);
- await GetAllPermissions({
+  await GetAllPermissions({
     onSuccess: res => {
       const {data} = res as {data: GetAllPermissionsResponse[]};
       setPermissions(data);
@@ -72,7 +72,6 @@ export default function useSignIn() {
     async (values: LoginForm) => {
       setLoading(true);
       await signInService(values.username.toLocaleLowerCase(), values.password, {
-
         onSuccess: (data: any) => {
           const accessToken = data?.accessToken ?? data?.data?.accessToken;
           const refreshToken = data?.refreshToken ?? data?.data?.refreshToken;
@@ -90,10 +89,8 @@ export default function useSignIn() {
           const {message} = data as {message: string};
           show(message, {type: 'error'});
         },
-        onError:(error) => {
+        onError:() => {
           setLoading(false);
-          // show(error.message, {type: 'error'});
-          console.log('error', error);
         },
       });
     },

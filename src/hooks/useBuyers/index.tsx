@@ -70,10 +70,9 @@ export default function useBuyers(route: Props) {
       onUnauthorized: () => {
         onSubmitRefreshToken();
       },
-      onError: (error, status) => {
+      onError: () => {
         setLoading(false);
         setLoadingMore(false);
-        console.log('GetAllCompanies error', {status, error});
       },
     });
   }, [page, onSubmitRefreshToken]);

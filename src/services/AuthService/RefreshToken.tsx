@@ -8,7 +8,6 @@ export const refreshTokenService = async <T extends object>(
   refreshToken: string,
   result: RefreshTokenCallbacks<T> = {},
 ): Promise<RefreshTokenResult<T>> => {
-  console.log('onSubmitRefreshToken',typeof refreshToken, refreshToken);
   return requestWithStatus<T>({
 
     config: {

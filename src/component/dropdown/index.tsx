@@ -23,6 +23,7 @@ const DropdownComponent = ({
 }: DropdownComponentProps) => {
   const isControlled = valueProp !== undefined;
   const [internalValue, setInternalValue] = useState<string | null>(null);
+
   useEffect(() => {
     if (isControlled) {
       setInternalValue(valueProp ?? null);
