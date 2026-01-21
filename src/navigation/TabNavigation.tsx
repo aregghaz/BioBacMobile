@@ -4,7 +4,7 @@ import type {BottomTabBarButtonProps} from '@react-navigation/bottom-tabs';
 import {Platform, Pressable} from 'react-native';
 import { MaterialIcons, AntDesign, Feather} from '@/component/icons/VectorIcon';
 
-import type {RootStackParamList, TabParamList} from './types';
+import type {RootStackParamList, TabParamList, SellerParamList} from './types';
 //-------------Home----------------
 import Home from '@/screen/Home';
 
@@ -15,7 +15,7 @@ import HistoryBuyers from '@/screen/Buyers/HistoryBuyers';
 //-------------Seller----------------
 import Seller from '@/screen/Seller';
 import History from '@/screen/Seller/History';
-
+import SellerCreate from '@/screen/Seller/Create';
 //-------------Settings----------------
 import Settings from '@/screen/Settings';
 
@@ -38,6 +38,9 @@ const Tab = createBottomTabNavigator<TabParamList>();
 const HomeStack = createNativeStackNavigator<RootStackParamList>();
 const SettingsStack = createNativeStackNavigator<RootStackParamList>();
 const DraftStack = createNativeStackNavigator<RootStackParamList>();
+const SellerStack = createNativeStackNavigator<SellerParamList>();
+
+
 const baseScreenOptions = {
   headerShown: false,
   lazy: true,
@@ -115,19 +118,32 @@ const screenOptions = ({route}: {route: {name: keyof TabParamList}}) => ({
   ),
 });
 
+
+const SellerStackScreen = () => {
+  return (
+    <SellerStack.Navigator screenOptions={{headerShown: false}}>
+      <SellerStack.Screen name="Seller" component={Seller} />
+      <SellerStack.Screen name="History" component={History} />
+      <SellerStack.Screen name="SellerCreate" component={SellerCreate} />
+    </SellerStack.Navigator>
+  );
+};
+
 const HomeStackScreen = () => {
   return (
     <HomeStack.Navigator screenOptions={{headerShown: false}}>
       <HomeStack.Screen name="Home" component={Home} />
       <HomeStack.Screen name="Buyers" component={Buyers} />
-      <HomeStack.Screen name="Seller" component={Seller} />
-      <HomeStack.Screen name="History" component={History} />
+      <HomeStack.Screen name="SellerStack" component={SellerStackScreen} />
       <HomeStack.Screen name="HistoryBuyers" component={HistoryBuyers} />
       <HomeStack.Screen name="Payment" component={Payment} />
       <HomeStack.Screen name="PaymentHistory" component={PaymentHistory} />
     </HomeStack.Navigator>
   );
 };
+
+
+
 
 const DraftStackScreen = () => {
   return (

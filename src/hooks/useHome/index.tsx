@@ -138,7 +138,10 @@ export default function useHome() {
           navigation.navigate('Buyers', {item});
           break;
         case 'SELLER':
-          navigation.navigate('Seller', {item});
+          navigation.navigate('SellerStack', {
+            screen: 'Seller',
+            params: {item},
+          });
           break;
         case 'PAYMENT':
           navigation.navigate('Payment');

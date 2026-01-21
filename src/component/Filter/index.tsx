@@ -5,7 +5,13 @@ import Button from '../button';
 import {AntDesign} from '@/component/icons/VectorIcon';
 import FilterIcon from '@/component/icons/FilterIcon';
 import {t} from '@/locales';
-export default function Filter() {
+
+type Props = {
+  onHandlerCreate?: () => void;
+}
+
+
+export default function Filter({onHandlerCreate}: Props) {
   return (
     <View style={styles.buttonContainer}>
     <Button
@@ -15,13 +21,15 @@ export default function Filter() {
       textStyle={{color: Colors.gray_400}}
       style={styles.filterButton}
     />
+    {onHandlerCreate && (
     <Button
       titleIcon={
         <AntDesign name="plus" size={24} color={Colors.white} />
       }
-      onHandler={() => console.log()}
+      onHandler={onHandlerCreate}
       style={styles.button}
     />
+    )}
   </View>
   )
 }

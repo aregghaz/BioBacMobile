@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {RootStackParamList} from '@/navigation/types';
+import {SellerParamList} from '@/navigation/types';
 import {getHistoryProps} from '@/types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import { refreshTokenService } from '@/services/AuthService/RefreshToken';
@@ -7,7 +7,7 @@ import useAuthStore from '@/zustland/authStore';
 import { GetCompanyHistory } from '@/services/Compny/Histroy';
 import { useFocusEffect } from '@react-navigation/native';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'History'>;
+type Props = NativeStackScreenProps<SellerParamList, 'History'>;
 
 export default function useHistory(route: Props) {
   const {item} = route.route.params;
@@ -46,7 +46,6 @@ export default function useHistory(route: Props) {
         const {metadata} = payload as unknown as {
           metadata: {page: number; last: boolean; totalPages: number};
         };
-        console.log('data', data);
         // page=0 -> replace, page>0 -> append
         setHistory(prev => (page === 0 ? data : [...prev, ...data]));
 
@@ -63,15 +62,14 @@ export default function useHistory(route: Props) {
       onUnauthorized: () => {
         onSubmitRefreshToken();
       },
-      onError: (error) => {
-        console.log('onError',error);
+      onError: () => {
         setLoading(false);
         setLoadingMore(false);
       },
     });
   }, [page, onSubmitRefreshToken, id]);
 
-
+// load more data //
   const loadMore = useCallback(() => {
     if (loading || loadingMore || !hasNextPage) {
       return;

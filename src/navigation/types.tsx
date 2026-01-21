@@ -1,7 +1,15 @@
-import { historyProps, HomeListProps } from '@/types';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {historyProps, HomeListProps} from '@/types';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import type {NavigatorScreenParams} from '@react-navigation/native';
 
 export const HomeStack = createNativeStackNavigator<RootStackParamList>();
+
+export type SellerParamList = {
+  Seller: {item: HomeListProps};
+  History: {item: historyProps};
+  SellerCreate: undefined;
+};
+
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -9,13 +17,12 @@ export type RootStackParamList = {
   Tabs: undefined;
   Home: undefined;
   Buyers: {item: HomeListProps};
-  Seller: {item: HomeListProps};
-  History: {item: historyProps};
   HistoryBuyers: {item: historyProps};
   Payment: undefined;
   Settings: undefined;
   PaymentHistory: undefined;
   Draft: undefined;
+  SellerStack: NavigatorScreenParams<SellerParamList> | undefined;
 };
 
 export type TabParamList = {
