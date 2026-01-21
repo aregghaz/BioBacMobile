@@ -1,6 +1,6 @@
 import {View, StyleSheet, Text} from 'react-native';
 import React from 'react';
-import {RootStackParamList} from '@/navigation/types';
+import {SellerParamList} from '@/navigation/types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {Colors} from '@/theme';
 import Header from '@/navigation/Header';
@@ -15,7 +15,7 @@ import NotFound from '@/component/icons/NotFound';
 import {DefaultModal} from '@/component/Modal';
 import Filter from '@/component/Filter';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Seller'>;
+type Props = NativeStackScreenProps<SellerParamList, 'Seller'>;
 
 export default function Seller(route: Props) {
   const {
@@ -30,6 +30,7 @@ export default function Seller(route: Props) {
     onSubmitDelete,
     onSubmitCancel,
     onSubmitConfirm,
+    onSubmitCreate
   } = useSeller(route);
   return (
     <View style={styles.container}>
@@ -42,7 +43,7 @@ export default function Seller(route: Props) {
         </View>
       ) : (
         <>
-         <Filter />
+         <Filter onHandlerCreate={onSubmitCreate}/>
           <VerticalFlatList
             data={seller}
             gap={10}

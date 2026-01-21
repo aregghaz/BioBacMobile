@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {RootStackParamList} from '@/navigation/types';
+import {RootStackParamList, SellerParamList} from '@/navigation/types';
 import {AllCompanyProps, HomeListProps} from '@/types';
 import {
   NativeStackNavigationProp,
@@ -11,7 +11,7 @@ import useAuthStore from '@/zustland/authStore';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {DeleteCompany} from '@/services/Compny/DeleteCompany';
 import { useToast } from '@/component/toast/ToastProvider';
-type Props = NativeStackScreenProps<RootStackParamList, 'Seller'>;
+type Props = NativeStackScreenProps<SellerParamList, 'Seller'>;
 
 export default function useSeller(route: Props) {
   const {item} = route.route.params;
@@ -26,7 +26,7 @@ export default function useSeller(route: Props) {
   const [hasNextPage, setHasNextPage] = useState(true);
   const getAllCompaniesRef = useRef<() => void>(() => {});
   const [visible, setVisible] = useState(false);
-  const [id, setId] = useState<number>(0);
+  const [companyId, setCompanyId] = useState<number>(0);
 
   // refresh token //
   const onSubmitRefreshToken = useCallback(() => {
@@ -88,18 +88,22 @@ export default function useSeller(route: Props) {
 
   // navigate to history //
   const onHandlerHistory = (id: number, name: string) => {
-    navigation.navigate('History', {item: {id: id, name: name}});
+    navigation.navigate('SellerStack', {
+      screen: 'History',
+      params: {item: {id: id, name: name}},
+    });
   };
 
   // submit delete //
   const onSubmitDelete = (id: number) => {
     setVisible(() => true);
-    setId(id);
+    setCompanyId(id);
   };
 
+// submit confirm modal//
   const onSubmitConfirm = () => {
     setLoading(true);
-    DeleteCompany(id, {
+    DeleteCompany(companyId, {
       onSuccess: () => {
         setVisible(() => false);
         getAllCompanies();
@@ -115,9 +119,18 @@ export default function useSeller(route: Props) {
     });
   };
 
+  // submit cancel modal//
   const onSubmitCancel = () => {
     setVisible(() => false);
   };
+
+// submit create seller//
+  const onSubmitCreate = () => {
+    navigation.navigate('SellerStack', {
+      screen: 'SellerCreate',
+    })
+  };
+
 
   useEffect(() => {
     getAllCompaniesRef.current = getAllCompanies;
@@ -141,5 +154,6 @@ export default function useSeller(route: Props) {
     visible,
     onSubmitDelete,
     onSubmitCancel,
+    onSubmitCreate,
   };
 }
