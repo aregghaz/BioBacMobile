@@ -10,6 +10,7 @@ import { GetCompanyGroup } from '@/services/Company/CompnayGroup';
 import { useFocusEffect } from '@react-navigation/native';
 import useCompanyGroupStore from '@/zustland/companyGroup';
 import { CompanyGroupParamList, DropdownOptions } from '@/navigation/types';
+import useRefetchOnReconnect from '../useRefetchOnReconnect';
 
 export default function useSellerCreate() {
   const isConnected = useNetworkStore(s => s.isConnected);
@@ -116,6 +117,9 @@ export default function useSellerCreate() {
       getCompanyGroup();
     }, [getCompanyGroup])
   );
+
+
+  useRefetchOnReconnect(getCompanyGroup);
     return {
         control,
         handleSubmit,

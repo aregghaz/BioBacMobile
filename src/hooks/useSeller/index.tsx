@@ -11,6 +11,7 @@ import useAuthStore from '@/zustland/authStore';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {DeleteCompany} from '@/services/Company/DeleteCompany';
 import { useToast } from '@/component/toast/ToastProvider';
+import useRefetchOnReconnect from '../useRefetchOnReconnect';
 type Props = NativeStackScreenProps<SellerParamList, 'Seller'>;
 
 export default function useSeller(route: Props) {
@@ -53,7 +54,7 @@ export default function useSeller(route: Props) {
         const {metadata} = payload as unknown as {
           metadata: {page: number; last: boolean; totalPages: number};
         };
-
+        console.log('getAllCompanies', data);
         // page=0 -> replace, page>0 -> append
         setSeller(prev => (page === 0 ? data : [...prev, ...data]));
 
@@ -141,6 +142,9 @@ export default function useSeller(route: Props) {
       getAllCompanies();
     }, [getAllCompanies])
   );
+
+  useRefetchOnReconnect(getAllCompanies);
+
 
   return {
     item: item as HomeListProps,

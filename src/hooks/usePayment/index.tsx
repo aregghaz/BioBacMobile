@@ -332,7 +332,6 @@ export default function usePayment() {
 
   useRefetchOnReconnect(getCompanyAccount);
 
-  // useRefetchOnReconnect(getCompanyAccount);
   return {
     date,
     showDate,
