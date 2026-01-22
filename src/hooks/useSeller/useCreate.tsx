@@ -31,6 +31,8 @@ export default function useSellerCreate() {
         debtorAmount: Yup.string().trim().required('Required'),
         companyGroup: Yup.string().trim().required('Required'),
         date: Yup.string().trim().required('Required'),
+        latitude: Yup.string().trim().required('Required'),
+        longitude: Yup.string().trim().required('Required'),
 
       });
 
@@ -47,6 +49,8 @@ export default function useSellerCreate() {
           debtorAmount: '0',
           companyGroup: '',
           date: '',
+          latitude: '',
+          longitude: '',
         },
         mode: 'onSubmit',
         resolver: yupResolver(validationSchema),

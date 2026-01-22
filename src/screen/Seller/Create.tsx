@@ -12,6 +12,7 @@ import TouchableView from '@/component/view/TouchableView';
 import DateIcon from '@/component/icons/DateIcon';
 import moment from 'moment';
 import DropdownComponent from '@/component/dropdown';
+import GetLocationButton from '@/component/getLocation';
 export default function SellerCreate() {
   const { control, handleSubmit, errors, onSubmit, onOpenDate, onclearDate, onCloseDate, date, showDate, onConfirmDate, companyGroupList, companyGroup, isConnected } = useSellerCreate();
 
@@ -146,6 +147,39 @@ export default function SellerCreate() {
               : undefined
           }
         />
+           <TextView title="Latitude" style={styles.marginTop} />
+        <Controller
+          control={control}
+          name="latitude"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              containerStyle={styles.marginTop}
+              placeholder="..."
+              inputSize="medium"
+              onChangeText={onChange}
+              keyboard="numeric"
+              value={value}
+              errorMessage={errors.latitude?.message}
+            />
+          )}
+        />
+           <TextView title="Longitude" style={styles.marginTop} />
+        <Controller
+          control={control}
+          name="latitude"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              containerStyle={styles.marginTop}
+              placeholder="..."
+              inputSize="medium"
+              onChangeText={onChange}
+              keyboard="numeric"
+              value={value}
+              errorMessage={errors.longitude?.message}
+            />
+          )}
+        />
+        <GetLocationButton onLocation={(e)=>console.log(e,'location')} onError={(e)=>console.log(e,'error')} />
         <Botton title="Create" onHandler={handleSubmit(onSubmit)} style={styles.button} />
       </ScrollView>
     </View>
@@ -169,4 +203,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 20,
   },
+  locationButton:{
+    width: '45%',
+  }
 });
