@@ -7,14 +7,13 @@ import {StyleSheet} from 'react-native';
 import { SafeAreaProvider,SafeAreaView } from 'react-native-safe-area-context';
 import type {RootStackParamList} from './types';
 import { OfflineBanner } from '@/component/OffliceBanner';
-import useNetworkStore from '@/zustland/networkStore';
-
 import Splash from '@/screen/Splash';
 //-------------Auth----------------
 import SignIn from '@/screen/Auth/SignIn';
 
 import Tabs from '@/navigation/TabNavigation';
 import { Colors } from '@/theme/Colors';
+import useNetworkStore from '@/zustland/networkStore';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -30,7 +29,7 @@ export default function AppNavigation() {
         style={styles.container}
         >
           {isConnected === false && <OfflineBanner /> }
-        <StatusBar barStyle="dark-content" />
+        <StatusBar barStyle="light-content" />
         <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown: false ,gestureEnabled: false}}>
             <Stack.Screen name="Splash" component={Splash}/>

@@ -4,7 +4,7 @@ import {getHistoryProps} from '@/types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import { refreshTokenService } from '@/services/AuthService/RefreshToken';
 import useAuthStore from '@/zustland/authStore';
-import { GetCompanyHistory } from '@/services/Compny/Histroy';
+import { GetCompanyHistory } from '@/services/Company/Histroy';
 import { useFocusEffect } from '@react-navigation/native';
 
 type Props = NativeStackScreenProps<SellerParamList, 'History'>;

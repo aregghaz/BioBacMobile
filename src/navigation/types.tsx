@@ -41,3 +41,15 @@ export type DraftParamList = {
   sum: number,
   targetId: number,
 };
+
+
+export type CompanyGroupParamList = {
+    name: string;
+    id: string;
+    updatedAt: string;
+};
+
+export type DropdownOptions = {
+    label: string;
+    value: string;
+};

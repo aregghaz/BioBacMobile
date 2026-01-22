@@ -15,7 +15,7 @@ export default function Login() {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-      <Text style={[styles.headerTitle,{fontFamily: FontFamily.semiBold}]}>BioBac</Text>
+      <Text style={[styles.headerTitle,{fontFamily: FontFamily.medium}]}>BioBac</Text>
         <Text style={[styles.title]}>Please enter your credentials to sign in!</Text>
         <View style={styles.inputContainerSmallMargin}>
           <Controller

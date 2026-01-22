@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   text: {
-    fontSize: FontSizes.medium,
+    fontSize: FontSizes.small,
     fontFamily: FontFamily.semiBold,
     color: Colors.black,
   },

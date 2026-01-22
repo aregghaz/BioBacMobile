@@ -2,7 +2,7 @@ import {useCallback, useState} from 'react';
 import {NavigationProp, useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import {GetPaymentCategory} from '@/services/Payment/PaymentCategory';
-import {GetCompanyAccount} from '@/services/Compny/Account';
+import {GetCompanyAccount} from '@/services/Company/Account';
 import {
   GetAccountResponse,
   GetPaymentTypeResponse,
@@ -69,12 +69,12 @@ export default function usePayment() {
     },
     [],
   );
-
+  // get root categories//
   const getRootCategories = useCallback((): PaymentCategoryNode[] => {
     const res = type.find(item => item.root === typeFilterName);
     return res?.categories ?? [];
   }, [type, typeFilterName]);
-
+  // validation schema//
   const validationSchema = Yup.object().shape({
     account: Yup.string().trim().required('Required'),
     amount: Yup.string().trim().required('Required'),
@@ -109,7 +109,8 @@ export default function usePayment() {
   const onOpenDate = () => {
     setShowDate(true);
   };
-
+ 
+  // clear date//
   const onclearDate = () => {
     setDate('');
   };

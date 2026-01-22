@@ -2,8 +2,8 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {Colors} from '@/theme/Colors';
 import {FontFamily} from '@/theme';
-import useSplash from '@/hooks/useSplash';
 import { deviceHeight } from '@/helper/Dimensions';
+import useSplash from '@/hooks/useSplash';
 export default function Splash() {
   useSplash();
   return (
