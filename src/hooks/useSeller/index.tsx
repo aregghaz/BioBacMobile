@@ -5,11 +5,11 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {GetAllCompanies} from '@/services/Compny/AllCompanies';
+import {GetAllCompanies} from '@/services/Company/AllCompanies';
 import {refreshTokenService} from '@/services/AuthService/RefreshToken';
 import useAuthStore from '@/zustland/authStore';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {DeleteCompany} from '@/services/Compny/DeleteCompany';
+import {DeleteCompany} from '@/services/Company/DeleteCompany';
 import { useToast } from '@/component/toast/ToastProvider';
 type Props = NativeStackScreenProps<SellerParamList, 'Seller'>;
 

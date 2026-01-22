@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     ...Shadows.md,
   },
   sizeSmall: {height: 40},
-  sizeMedium: {height: 54},
+  sizeMedium: {height: 50},
   sizeLarge: {height: 60},
   inputContainer: {
     width: '85%',

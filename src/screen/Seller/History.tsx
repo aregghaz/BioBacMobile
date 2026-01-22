@@ -7,7 +7,7 @@ import {Colors} from '@/theme';
 import Header from '@/navigation/Header';
 import VerticalFlatList from '@/component/list/VerticalFlatList';
 import Table from '@/component/Table';
-import Activity from '@/component/activityIndicator';
+import Activity from '@/component/ActivityIndicator';
 import {deviceHeight} from '@/helper';
 import {getHistoryProps} from '@/types';
 import HistoryCard from './_component/HistoryCard';

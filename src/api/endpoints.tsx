@@ -13,6 +13,7 @@ type Endpoints = {
   GetCompanyAccount: string;
   CreatePayment: string;
   GetPayment: string;
+  GetCompanyGroup: string;
 }
 
 export const endpoints:Endpoints = {
@@ -31,7 +32,7 @@ export const endpoints:Endpoints = {
   GetCompanyHistory: 'company/company-history/',
   DeleteCompany: 'company/delete/',
   GetCompanyAccount: 'company/account',
-
+  GetCompanyGroup: 'company/company-group',
 
   //payment
   GetPaymentCategory: 'company/payment-category',
