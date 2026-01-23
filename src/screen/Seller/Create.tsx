@@ -12,9 +12,11 @@ import TouchableView from '@/component/view/TouchableView';
 import DateIcon from '@/component/icons/DateIcon';
 import moment from 'moment';
 import DropdownComponent from '@/component/dropdown';
+import MapModal from '@/component/Modal/MapModal';
 export default function SellerCreate() {
-  const { control, handleSubmit, errors, onSubmit, onOpenDate, onclearDate, onCloseDate, date, showDate, onConfirmDate, companyGroupList, companyGroup, isConnected,onPressGetLocation } = useSellerCreate();
-
+  const { control, handleSubmit, errors, onSubmit, onOpenDate,
+    onclearDate, onCloseDate, date, showDate, onConfirmDate, companyGroupList,
+     companyGroup, isConnected, onPressGetLocation, showMap,onCloseMap,onSubmitMap,latitude,longitude } = useSellerCreate();
 
   return (
     <View style={styles.container}>
@@ -146,39 +148,31 @@ export default function SellerCreate() {
           }
         />
         <TextView title="Latitude" style={styles.marginTop} />
-        <Controller
-          control={control}
-          name="latitude"
-          render={({ field: { onChange, value } }) => (
+  
             <TextInput
               containerStyle={styles.marginTop}
               placeholder="..."
               inputSize="medium"
-              onChangeText={onChange}
+              onChangeText={(text) => console.log(text)}
               keyboard="numeric"
-              value={value}
+              value={latitude}
               errorMessage={errors.latitude?.message}
             />
-          )}
-        />
+     
         <TextView title="Longitude" style={styles.marginTop} />
-        <Controller
-          control={control}
-          name="latitude"
-          render={({ field: { onChange, value } }) => (
             <TextInput
               containerStyle={styles.marginTop}
               placeholder="..."
               inputSize="medium"
-              onChangeText={onChange}
+              onChangeText={(text) => console.log(text)}
               keyboard="numeric"
-              value={value}
+              value={longitude}
               errorMessage={errors.longitude?.message}
             />
-          )}
-        />
-        <Botton title="Get Location" onHandler={onPressGetLocation} style={styles.locationButton} textStyle={styles.locationButtonText} />
+
+        <Botton title="Show Map" onHandler={onPressGetLocation} style={styles.locationButton} textStyle={styles.locationButtonText} />
         <Botton title="Create" onHandler={handleSubmit(onSubmit)} style={styles.button} />
+        <MapModal isVisible={showMap} onClose={() => onCloseMap()} onSubmit={(latitude, longitude) => onSubmitMap(latitude, longitude)} />
       </ScrollView>
     </View>
   )
@@ -212,5 +206,12 @@ const styles = StyleSheet.create({
   },
   locationButtonText: {
     color: Colors.blue,
+  },
+  mapContainer: {
+    width: '100%',
+    height: 200,
+  },
+  map: {
+    flex: 1,
   },
 });

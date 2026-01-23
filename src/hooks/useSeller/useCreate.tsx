@@ -11,7 +11,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import useCompanyGroupStore from '@/zustland/companyGroup';
 import { CompanyGroupParamList, DropdownOptions } from '@/navigation/types';
 import useRefetchOnReconnect from '../useRefetchOnReconnect';
-import { ensureLocationPermission, getSafeCurrentLocation } from '@/component/getLocation';
 
 export default function useSellerCreate() {
   const isConnected = useNetworkStore(s => s.isConnected);
@@ -22,7 +21,9 @@ export default function useSellerCreate() {
   const [date, setDate] = useState<string>(
     moment(new Date()).format('DD/MM/YYYY'),
   );
-
+  const [latitude, setLatitude] = useState<string>('');
+  const [longitude, setLongitude] = useState<string>('');
+  const [showMap, setShowMap] = useState(false);
     const validationSchema = Yup.object().shape({
         companyName: Yup.string().trim().required('Required'),
         generalDirector: Yup.string().trim().required('Required'),
@@ -41,6 +42,7 @@ export default function useSellerCreate() {
         control,
         handleSubmit,
         formState: {errors},
+        setValue,
       } = useForm({
         defaultValues: {
           companyName: '',
@@ -121,21 +123,20 @@ export default function useSellerCreate() {
 
  // get location //
   const onPressGetLocation = async () => {
-    const hasPermission = await ensureLocationPermission();
+  setShowMap(true);
+  };
 
-    if (!hasPermission) {
-      show('Permission required', {type: 'error'});
-      return;
-    }
-
-    getSafeCurrentLocation(
-      coords => {
-        console.log('CORRECT LOCATION:', coords);
-      },
-       () => {
-        show('Failed to get location', {type: 'error'});
-      },
-    );
+// close map modal
+  const onCloseMap = () => {
+    setShowMap(false);
+  };
+// submit map modal
+  const onSubmitMap = (latitude: number, longitude: number) => {
+    setLatitude(latitude.toString());
+    setLongitude(longitude.toString());
+     setValue('latitude', latitude.toString());
+     setValue('longitude', longitude.toString());
+    setShowMap(false);
   };
 
   useFocusEffect(
@@ -160,6 +161,11 @@ export default function useSellerCreate() {
         companyGroupList,
         companyGroup,
         isConnected,
-        onPressGetLocation
+        onPressGetLocation,
+        showMap,
+        onCloseMap,
+        onSubmitMap,
+        latitude,
+        longitude,
     }
 }
