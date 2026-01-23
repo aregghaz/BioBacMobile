@@ -8,14 +8,17 @@ import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {signInService} from '../../services/AuthService/SingIn';
 import {GetAllPermissionsResponse, LoginForm} from '@/types';
 import {useToast} from '@/component/toast/ToastProvider';
-import type {RootStackParamList} from '@/navigation/types';
+import type {CompanyGroupParamList, DropdownOptions, RootStackParamList} from '@/navigation/types';
 import useAuthStore from '@/zustland/authStore';
 import { GetAllPermissions } from '@/services/Permissions/GetPermissions';
 import usePermissionStore from '@/zustland/permissionStore';
+import { GetCompanyGroup } from '@/services/Company/CompnayGroup';
+import useCompanyGroupStore from '@/zustland/companyGroup';
 
 export default function useSignIn() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const{setToken,setRefreshToken,setIsLoggedIn} = useAuthStore();
+  const {setCompanyGroup} = useCompanyGroupStore();
   const {setPermissions} = usePermissionStore();
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
@@ -45,6 +48,28 @@ export default function useSignIn() {
  const toggleShowPass = useCallback(() => {
   setShowPass(v => !v);
  }, []);
+
+  // get company group
+  const getCompanyGroup = useCallback(async () => {
+    await GetCompanyGroup({
+      onSuccess: res => {
+        const {data} = res as {data: CompanyGroupParamList[]};
+        const companyGroupOptions: DropdownOptions[] = data.map(
+          (item: CompanyGroupParamList) => ({
+            label: item.name,
+            value: item.id,
+          }),
+        );
+        setCompanyGroup(companyGroupOptions);
+      },
+      onUnauthorized: () => {
+        show('Unauthorized', {type: 'error'});
+      },
+      onError: () => {
+        show('Failed to get company group', {type: 'error'});
+      },
+    });
+  }, [setCompanyGroup, show]);
 
 
  // get all permissions //
@@ -82,7 +107,7 @@ export default function useSignIn() {
           setToken(accessToken);
           setRefreshToken(refreshToken);
           getAllPermissions();
-
+          getCompanyGroup()
         },
         onUnauthorized: data => {
           setLoading(false);
@@ -94,8 +119,9 @@ export default function useSignIn() {
         },
       });
     },
-    [show, setToken, setRefreshToken, getAllPermissions],
+    [show, setToken, setRefreshToken, getAllPermissions,getCompanyGroup],
   );
+
 
   return {
     loading,

@@ -135,7 +135,10 @@ export default function useHome() {
     (item: HomeListProps) => {
       switch (item.key) {
         case 'BUYER':
-          navigation.navigate('Buyers', {item});
+          navigation.navigate('BuyerStack', {
+            screen: 'Buyers',
+            params: {item},
+          });
           break;
         case 'SELLER':
           navigation.navigate('SellerStack', {

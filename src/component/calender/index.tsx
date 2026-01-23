@@ -64,6 +64,12 @@ export type BiobacCalendarProps = {
   onChange?: (dateString: string, dateData: DateData) => void;
   minDate?: string;
   maxDate?: string;
+  /**
+   * When true (default), keeps current behavior: limits selectable dates to a recent range
+   * (today - pastDaysEnabled ... today) and disables future by default.
+   * When false, behaves like a normal calendar (no implicit min/max restrictions).
+   */
+  restrictedMode?: boolean; // default: true
   // Only the range [today - pastDaysEnabled, today] is enabled by default.
   // You can override with minDate/maxDate.
   pastDaysEnabled?: number; // default: 10
@@ -104,6 +110,7 @@ const Calender = ({
   onChange,
   minDate,
   maxDate,
+  restrictedMode = false,
   pastDaysEnabled = 10,
   disableFuture = true,
   disablePast = true,
@@ -119,14 +126,15 @@ const Calender = ({
     typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
   const today = useMemo(() => toISODate(new Date()), []);
   const [showDate, setShowDate] = useState(false);
-  const effectiveMinDate =
-    minDate ??
-    (pastDaysEnabled !== undefined
-      ? addDaysISO(today, -pastDaysEnabled)
-      : disablePast
-        ? today
-        : undefined);
-  const effectiveMaxDate = maxDate ?? (disableFuture ? today : undefined);
+  const effectiveMinDate = restrictedMode
+    ? minDate ??
+      (pastDaysEnabled !== undefined
+        ? addDaysISO(today, -pastDaysEnabled)
+        : disablePast
+          ? today
+          : undefined)
+    : minDate;
+  const effectiveMaxDate = restrictedMode ? maxDate ?? (disableFuture ? today : undefined) : maxDate;
 
   const [internalValue, setInternalValue] = useState<string | null>(
     safeValue ?? null,

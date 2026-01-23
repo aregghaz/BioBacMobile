@@ -30,11 +30,13 @@ export default function Seller(route: Props) {
     onSubmitDelete,
     onSubmitCancel,
     onSubmitConfirm,
-    onSubmitCreate
+    onSubmitCreate,
+    isConnected,
   } = useSeller(route);
   return (
     <View style={styles.container}>
       <Header title={routeItem?.label} showBack={true} />
+      <Filter onHandlerCreate={onSubmitCreate}/>
       {loading ? (
         <Activity style={styles.activityIndicator} />
       ) : seller.length === 0 ? (
@@ -43,7 +45,7 @@ export default function Seller(route: Props) {
         </View>
       ) : (
         <>
-         <Filter onHandlerCreate={onSubmitCreate}/>
+        {isConnected ? (
           <VerticalFlatList
             data={seller}
             gap={10}
@@ -72,6 +74,11 @@ export default function Seller(route: Props) {
               </Table>
             )}
           />
+        ) : (
+          <View style={styles.emptyContainer}>
+            <NotFound size={120} />
+          </View>
+        )}
         </>
       )}
       <DefaultModal

@@ -4,11 +4,14 @@ import { refreshTokenService } from '@/services/AuthService/RefreshToken';
 import useAuthStore from '@/zustland/authStore';
 import { useFocusEffect } from '@react-navigation/native';
 import { GetHistoryPayment } from '@/services/Payment/HistoryPayment';
+import useRefetchOnReconnect from '../useRefetchOnReconnect';
+import useNetworkStore from '@/zustland/networkStore';
 
 
 export default function usePaymentHistory() {
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const isConnected = useNetworkStore(s => s.isConnected);
   const {refreshToken} = useAuthStore();
   const [history, setHistory] = useState<GetPaymentAllResponse[]>([]);
   const [page, setPage] = useState<number>(0);
@@ -30,6 +33,7 @@ export default function usePaymentHistory() {
 
   // get seller data //
   const getHistory = useCallback(() => {
+    if (!isConnected) return;
     if (page === 0) {
       setLoading(true);
     } else {
@@ -41,7 +45,6 @@ export default function usePaymentHistory() {
         const {metadata} = payload as unknown as {
           metadata: {page: number; last: boolean; totalPages: number};
         };
-        console.log('data', data);
         // page=0 -> replace, page>0 -> append
         setHistory(prev => (page === 0 ? data : [...prev, ...data]));
 
@@ -64,7 +67,7 @@ export default function usePaymentHistory() {
         setLoadingMore(false);
       },
     });
-  }, [page, onSubmitRefreshToken]);
+  }, [page, onSubmitRefreshToken, isConnected]);
 
 
   const loadMore = useCallback(() => {
@@ -90,6 +93,7 @@ export default function usePaymentHistory() {
     }, [getHistory])
   );
 
+  useRefetchOnReconnect(getHistory);
   return {
     loading,
     loadingMore,

@@ -1,35 +1,33 @@
 import * as Yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
-import { useCallback } from 'react';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {useForm} from 'react-hook-form';
+import {useCallback, useState} from 'react';
 import useNetworkStore from '@/zustland/networkStore';
-import { useState } from 'react';
-import { useToast } from '@/component/toast/ToastProvider';
+import {useToast} from '@/component/toast/ToastProvider';
 import moment from 'moment';
-import { GetCompanyGroup } from '@/services/Company/CompnayGroup';
-import { useFocusEffect } from '@react-navigation/native';
+import {GetCompanyGroup} from '@/services/Company/CompnayGroup';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import useCompanyGroupStore from '@/zustland/companyGroup';
-import { CompanyGroupParamList, DropdownOptions } from '@/navigation/types';
+import {CompanyGroupParamList, DropdownOptions} from '@/navigation/types';
 import useRefetchOnReconnect from '../useRefetchOnReconnect';
-import { CreateSeller } from '@/services/Company/CreateSeller';
-import { useNavigation } from '@react-navigation/native';
-import type { CreateSellerRequest } from '@/types';
+import {CreateSeller} from '@/services/Company/CreateSeller';
+import type {CreateSellerRequest} from '@/types';
 import useDraftStore from '@/zustland/draftStore';
-export default function useSellerCreate() {
+
+export default function useBuyerCreate() {
   const isConnected = useNetworkStore(s => s.isConnected);
   const [showDate, setShowDate] = useState(false);
   const navigation = useNavigation();
-  const { companyGroup, setCompanyGroup } = useCompanyGroupStore();
-  const { Draft, setDraft } = useDraftStore();
+  const {companyGroup, setCompanyGroup} = useCompanyGroupStore();
+  const {Draft, setDraft} = useDraftStore();
   const [companyGroupList, setCompanyGroupList] = useState<DropdownOptions[]>([]);
-  const { show } = useToast();
-  const [date, setDate] = useState<string>(
-    moment(new Date()).format('DD/MM/YYYY'),
-  );
+  const {show} = useToast();
+  const [date, setDate] = useState<string>(moment(new Date()).format('DD/MM/YYYY'));
   const [errorDate, setErrorDate] = useState<string>('');
   const [latitude, setLatitude] = useState<string>('');
   const [longitude, setLongitude] = useState<string>('');
   const [showMap, setShowMap] = useState(false);
+
   const validationSchema = Yup.object().shape({
     companyName: Yup.string().trim().required('Required'),
     generalDirector: Yup.string().trim().required('Required'),
@@ -46,11 +44,12 @@ export default function useSellerCreate() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
     getValues,
   } = useForm({
     defaultValues: {
       companyName: '',
+      generalDirector: '',
       companyPhone: '',
       actualAddress: '',
       addressTT: '',
@@ -64,19 +63,18 @@ export default function useSellerCreate() {
     resolver: yupResolver(validationSchema),
   });
 
-
   // open date picker
   const onOpenDate = () => {
     setShowDate(true);
   };
 
-  // clear date//
+  // clear date
   const onclearDate = () => {
     setDate('');
     setErrorDate('Required');
   };
 
-  // close date picker (used by modal overlay)
+  // close date picker
   const onCloseDate = () => {
     setShowDate(false);
     setErrorDate('');
@@ -101,7 +99,7 @@ export default function useSellerCreate() {
     if (!isConnected) return;
     await GetCompanyGroup({
       onSuccess: res => {
-        const { data } = res as { data: CompanyGroupParamList[] };
+        const {data} = res as {data: CompanyGroupParamList[]};
         const companyGroupOptions: DropdownOptions[] = data.map(
           (item: CompanyGroupParamList) => ({
             label: item.name,
@@ -109,66 +107,64 @@ export default function useSellerCreate() {
           }),
         );
         setCompanyGroup(companyGroupOptions);
-        setCompanyGroupList(companyGroupOptions)
+        setCompanyGroupList(companyGroupOptions);
       },
       onUnauthorized: () => {
-        show('Unauthorized', { type: 'error' });
+        show('Unauthorized', {type: 'error'});
       },
       onError: () => {
-        show('Failed to get company group', { type: 'error' });
+        show('Failed to get company group', {type: 'error'});
       },
     });
   }, [isConnected, show, setCompanyGroup]);
 
-
-
-  // get location //
+  // get location
   const onPressGetLocation = async () => {
     if (!isConnected) {
-      show('Please check your internet connection', { type: 'error' });
+      show('Please check your internet connection', {type: 'error'});
       return;
     }
     setShowMap(true);
   };
 
-  // close map modal
   const onCloseMap = () => {
     setShowMap(false);
   };
 
-  // submit map modal
   const onSubmitMap = (lat: number, lng: number) => {
     setLatitude(lat.toString());
     setLongitude(lng.toString());
     setShowMap(false);
   };
 
-
-  // create company //
+  // create company (buyer)
   const onCreateCompany = useCallback(async () => {
     if (date === '') {
       setErrorDate('Required');
       return;
     }
-    if (Number(getValues().creditorAmount) !== 0 && Number(getValues().debtorAmount) !== 0) {
-      show('Please enter a creditor or debtor amount', { type: 'error' });
+    if (
+      Number(getValues().creditorAmount) !== 0 &&
+      Number(getValues().debtorAmount) !== 0
+    ) {
+      show('Please enter a creditor or debtor amount', {type: 'error'});
       return;
     }
+
     const data: CreateSellerRequest = {
       name: getValues().companyName,
       clientRegisteredDate: `${moment(new Date()).format('DD/MM/YYYY')}:23:59:00`,
       ogrnDate: `${date}:23:59:00`,
       ceo: getValues().generalDirector,
-      phones: [
-        getValues().companyPhone
-      ],
+      phones: [getValues().companyPhone],
       emails: [],
-      typeIds: [2],
+      typeIds: [1],
       cooperationId: 1,
       companyGroupId: Number(getValues().companyGroup),
       longitude: longitude,
       latitude: latitude,
-    }
+    };
+
     if (Number(getValues().creditorAmount) > 0) {
       data.creditorAmount = Number(getValues().creditorAmount);
     }
@@ -187,36 +183,48 @@ export default function useSellerCreate() {
     if (getValues().warehouseAddress !== '') {
       data.warehouseAddress = getValues().warehouseAddress;
     }
-    // if offline, save to draft//
+
+    // if offline, save to draft
     if (!isConnected) {
       setDraft([...Draft, data]);
-      show('Company saved to draft', { type: 'success' });
+      show('Company saved to draft', {type: 'success'});
       navigation.goBack();
       return;
     }
+
     CreateSeller(data, {
       onSuccess: () => {
-        show('Company created successfully', { type: 'success' });
+        show('Company created successfully', {type: 'success'});
         navigation.goBack();
       },
       onUnauthorized: () => {
-        show('Unauthorized', { type: 'error' });
+        show('Unauthorized', {type: 'error'});
       },
-      onError: (error) => {
+      onError: error => {
         console.log('error', error);
-        show('Failed to create company', { type: 'error' });
+        show('Failed to create company', {type: 'error'});
       },
     });
-  }, [getValues, date, show, longitude, latitude, navigation, Draft, setDraft, isConnected]);
+  }, [
+    getValues,
+    date,
+    show,
+    longitude,
+    latitude,
+    navigation,
+    Draft,
+    setDraft,
+    isConnected,
+  ]);
 
   useFocusEffect(
     useCallback(() => {
       getCompanyGroup();
-    }, [getCompanyGroup])
+    }, [getCompanyGroup]),
   );
 
-
   useRefetchOnReconnect(getCompanyGroup);
+
   return {
     control,
     handleSubmit,
@@ -239,6 +247,7 @@ export default function useSellerCreate() {
     setLatitude,
     setLongitude,
     onCreateCompany,
-    errorDate
-  }
+    errorDate,
+  };
 }
+

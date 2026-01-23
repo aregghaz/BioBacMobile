@@ -1,16 +1,19 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import type {BottomTabBarButtonProps} from '@react-navigation/bottom-tabs';
-import {Platform, Pressable} from 'react-native';
+import {Platform, Pressable, StyleSheet, Text, View} from 'react-native';
 import { MaterialIcons, AntDesign, Feather} from '@/component/icons/VectorIcon';
+import { Colors, FontFamily } from '@/theme';
+import useDraftStore from '@/zustland/draftStore';
 
-import type {RootStackParamList, TabParamList, SellerParamList} from './types';
+import type {RootStackParamList, TabParamList, SellerParamList, BuyerParamList} from './types';
 //-------------Home----------------
 import Home from '@/screen/Home';
 
 //-------------Buyers----------------
 import Buyers from '@/screen/Buyers';
 import HistoryBuyers from '@/screen/Buyers/HistoryBuyers';
+import BuyerCreate from '@/screen/Buyers/Create';
 
 //-------------Seller----------------
 import Seller from '@/screen/Seller';
@@ -28,7 +31,6 @@ import PaymentHistory from '@/screen/payment/PaymentHistory';
 import Draft from '@/screen/Draft';
 
 import { deviceHeight } from '@/helper';
-import { FontFamily } from '@/theme';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
@@ -39,6 +41,7 @@ const HomeStack = createNativeStackNavigator<RootStackParamList>();
 const SettingsStack = createNativeStackNavigator<RootStackParamList>();
 const DraftStack = createNativeStackNavigator<RootStackParamList>();
 const SellerStack = createNativeStackNavigator<SellerParamList>();
+const BuyerStack = createNativeStackNavigator<BuyerParamList>();
 
 
 const baseScreenOptions = {
@@ -86,17 +89,31 @@ function TabBarIcon({
   color,
   size,
   focused,
+  draftCount,
 }: {
   routeName: keyof TabParamList;
   color: string;
   size: number;
   focused: boolean;
+  draftCount: number;
 }) {
+  const showBadge = routeName === 'DraftScreen' && draftCount > 0;
+  const badgeText = draftCount > 99 ? '99+' : String(draftCount);
+
   if (routeName === 'HomeScreen') {
     return <AntDesign name="home" size={size} color={color} />;
   }
   if (routeName === 'DraftScreen') {
-    return <MaterialIcons name="access-time" size={size} color={color} />;
+    return (
+      <View style={styles.iconWrapper}>
+        <MaterialIcons name="access-time" size={size} color={color} />
+        {showBadge ? (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{badgeText}</Text>
+          </View>
+        ) : null}
+      </View>
+    );
   }
   // Settings tab (Ionicons)
   return (
@@ -108,17 +125,6 @@ function TabBarIcon({
   );
 }
 
-const screenOptions = ({route}: {route: {name: keyof TabParamList}}) => ({
-  ...baseScreenOptions,
-  tabBarButton: (props: BottomTabBarButtonProps) => (
-    <NoFeedbackTabBarButton {...props} />
-  ),
-  tabBarIcon: (props: {color: string; size: number; focused: boolean}) => (
-    <TabBarIcon routeName={route.name} {...props} size={30}/>
-  ),
-});
-
-
 const SellerStackScreen = () => {
   return (
     <SellerStack.Navigator screenOptions={{headerShown: false}}>
@@ -129,13 +135,22 @@ const SellerStackScreen = () => {
   );
 };
 
+const BuyerStackScreen = () => {
+  return (
+    <BuyerStack.Navigator screenOptions={{headerShown: false}}>
+      <BuyerStack.Screen name="Buyers" component={Buyers} />
+      <BuyerStack.Screen name="HistoryBuyers" component={HistoryBuyers} />
+      <BuyerStack.Screen name="BuyerCreate" component={BuyerCreate} />
+    </BuyerStack.Navigator>
+  );
+};
+
 const HomeStackScreen = () => {
   return (
     <HomeStack.Navigator screenOptions={{headerShown: false}}>
       <HomeStack.Screen name="Home" component={Home} />
-      <HomeStack.Screen name="Buyers" component={Buyers} />
+      <HomeStack.Screen name="BuyerStack" component={BuyerStackScreen} />
       <HomeStack.Screen name="SellerStack" component={SellerStackScreen} />
-      <HomeStack.Screen name="HistoryBuyers" component={HistoryBuyers} />
       <HomeStack.Screen name="Payment" component={Payment} />
       <HomeStack.Screen name="PaymentHistory" component={PaymentHistory} />
     </HomeStack.Navigator>
@@ -165,6 +180,18 @@ const SettingStackScreen = () => {
 
 
 export default function TabNavigation() {
+  const draftCount = useDraftStore(s => s.Draft.length);
+
+  const screenOptions = ({route}: {route: {name: keyof TabParamList}}) => ({
+    ...baseScreenOptions,
+    tabBarButton: (props: BottomTabBarButtonProps) => (
+      <NoFeedbackTabBarButton {...props} />
+    ),
+    tabBarIcon: (props: {color: string; size: number; focused: boolean}) => (
+      <TabBarIcon routeName={route.name} {...props} size={30} draftCount={draftCount} />
+    ),
+  });
+
   return (
     <Tab.Navigator
       screenOptions={screenOptions}>
@@ -174,3 +201,30 @@ export default function TabNavigation() {
     </Tab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  iconWrapper: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badge: {
+    position: 'absolute',
+    top: -6,
+    right: -10,
+    minWidth: 18,
+    height: 18,
+    paddingHorizontal: 4,
+    borderRadius: 9,
+    backgroundColor: Colors.red,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeText: {
+    color: Colors.white,
+    fontSize: 10,
+    fontFamily: FontFamily.semiBold,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
+});
