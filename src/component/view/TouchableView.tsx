@@ -1,4 +1,4 @@
-import {Text, StyleSheet, ViewStyle, TouchableOpacity} from 'react-native';
+import {Text, StyleSheet, View, ViewStyle, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Colors, FontFamily, FontSizes, Shadows} from '@/theme';
 import {MaterialIcons} from '../icons/VectorIcon';
@@ -12,6 +12,7 @@ interface TouchableViewProps {
   focused?: boolean; // controlled focus (optional)
   onBlur?:boolean
   icon?: React.ReactNode;
+  errorMessage?: string;
 }
 
 export default function TouchableView({
@@ -22,9 +23,11 @@ export default function TouchableView({
   focused,
   onBlur,
   icon,
+  errorMessage,
 }: TouchableViewProps) {
   const [isFocusedInternal, setIsFocusedInternal] = useState(onBlur);
   const isFocused = focused ?? isFocusedInternal;
+  const hasError = !!errorMessage;
   const onHandlerPress = () => {
     setIsFocusedInternal(true);
     onPress?.();
@@ -34,34 +37,41 @@ export default function TouchableView({
   }, [onBlur]);
   
   return (
-    <TouchableOpacity
-      activeOpacity={0.8}
-      style={[
-        styles.container,
-        style,
-        {borderColor: isFocused ? Colors.blue : Colors.gray_200},
-      ]}
-      onPress={onHandlerPress}
+    <View style={ styles.wrapper}>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={[
+          styles.container,
+          style,
+          {borderColor: isFocused ? Colors.blue : Colors.gray_200,backgroundColor: hasError ? Colors.red_100 : Colors.white},
+        ]}
+        onPress={onHandlerPress}
       >
-      <Text style={[styles.text, {color: title ? Colors.black : Colors.gray}]}>
-        {title || 'Select'}
-      </Text>
+        <Text style={[styles.text, {color: title ? Colors.black : Colors.gray}]}>
+          {title || 'Select'}
+        </Text>
 
-      {title ? (
-        <TouchableOpacity activeOpacity={0.8} onPress={onClose}>
-          <MaterialIcons name="close" size={22} color="black" />
-        </TouchableOpacity>
-      ) : icon ? (
-        icon
-      ) : null}
-    </TouchableOpacity>
+        {title ? (
+          <TouchableOpacity activeOpacity={0.8} onPress={onClose}>
+            <MaterialIcons name="close" size={22} color="black" />
+          </TouchableOpacity>
+        ) : icon ? (
+          icon
+        ) : null}
+      </TouchableOpacity>
+
+      {hasError ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     width: '93%',
     alignSelf: 'center',
+
+  },
+  container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -77,5 +87,12 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.small,
     fontFamily: FontFamily.regular,
     color: Colors.black,
+  },
+  errorText: {
+    marginTop: 6,
+    marginLeft: 6,
+    fontSize: FontSizes.small,
+    fontFamily: FontFamily.regular,
+    color: Colors.red,
   },
 });
