@@ -6,13 +6,14 @@ import { MaterialIcons, AntDesign, Feather} from '@/component/icons/VectorIcon';
 import { Colors, FontFamily } from '@/theme';
 import useDraftStore from '@/zustland/draftStore';
 
-import type {RootStackParamList, TabParamList, SellerParamList} from './types';
+import type {RootStackParamList, TabParamList, SellerParamList, BuyerParamList} from './types';
 //-------------Home----------------
 import Home from '@/screen/Home';
 
 //-------------Buyers----------------
 import Buyers from '@/screen/Buyers';
 import HistoryBuyers from '@/screen/Buyers/HistoryBuyers';
+import BuyerCreate from '@/screen/Buyers/Create';
 
 //-------------Seller----------------
 import Seller from '@/screen/Seller';
@@ -40,6 +41,7 @@ const HomeStack = createNativeStackNavigator<RootStackParamList>();
 const SettingsStack = createNativeStackNavigator<RootStackParamList>();
 const DraftStack = createNativeStackNavigator<RootStackParamList>();
 const SellerStack = createNativeStackNavigator<SellerParamList>();
+const BuyerStack = createNativeStackNavigator<BuyerParamList>();
 
 
 const baseScreenOptions = {
@@ -133,13 +135,22 @@ const SellerStackScreen = () => {
   );
 };
 
+const BuyerStackScreen = () => {
+  return (
+    <BuyerStack.Navigator screenOptions={{headerShown: false}}>
+      <BuyerStack.Screen name="Buyers" component={Buyers} />
+      <BuyerStack.Screen name="HistoryBuyers" component={HistoryBuyers} />
+      <BuyerStack.Screen name="BuyerCreate" component={BuyerCreate} />
+    </BuyerStack.Navigator>
+  );
+};
+
 const HomeStackScreen = () => {
   return (
     <HomeStack.Navigator screenOptions={{headerShown: false}}>
       <HomeStack.Screen name="Home" component={Home} />
-      <HomeStack.Screen name="Buyers" component={Buyers} />
+      <HomeStack.Screen name="BuyerStack" component={BuyerStackScreen} />
       <HomeStack.Screen name="SellerStack" component={SellerStackScreen} />
-      <HomeStack.Screen name="HistoryBuyers" component={HistoryBuyers} />
       <HomeStack.Screen name="Payment" component={Payment} />
       <HomeStack.Screen name="PaymentHistory" component={PaymentHistory} />
     </HomeStack.Navigator>

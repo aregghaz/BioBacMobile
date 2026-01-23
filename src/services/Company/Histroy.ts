@@ -11,6 +11,7 @@ import {
   export const GetCompanyHistory = async <T extends object>(
     id: number,
     page: number = 0,
+   typeId: number = 2,
     result: CompanyHistoryCallbacks<T> = {},
   ): Promise<CompanyHistoryResult<T>> => {
     return requestWithStatus<T>({
@@ -18,7 +19,7 @@ import {
         method: 'POST',
         url: `${endpoints.GetCompanyHistory}${id}?sortBy=timestamp&sortDir=DESC&page=${page}&size=20&id=${id}`,
         data: {
-          typeIds: {operator: 'contains', value: [2]},
+        typeIds: {operator: 'contains', value: [typeId]},
         },
       },
       callbacks: result,

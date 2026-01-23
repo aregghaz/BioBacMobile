@@ -43,7 +43,7 @@ export default function useHistory(route: Props) {
     } else {
       setLoadingMore(true);
     }
-    return GetCompanyHistory(id, page, {
+    return GetCompanyHistory(id, page, 2, {
       onSuccess: payload => {
         const {data} = payload as {data: getHistoryProps[]};
         const {metadata} = payload as unknown as {

@@ -1,6 +1,6 @@
 import {View, StyleSheet, Text} from 'react-native';
 import React from 'react';
-import {RootStackParamList} from '@/navigation/types';
+import {BuyerParamList} from '@/navigation/types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {Colors} from '@/theme';
 import Header from '@/navigation/Header';
@@ -16,7 +16,7 @@ import {DefaultModal} from '@/component/Modal';
 import Filter from '@/component/Filter';
 import {t} from '@/locales';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Buyers'>;
+type Props = NativeStackScreenProps<BuyerParamList, 'Buyers'>;
 
 export default function Buyers(route: Props) {
   const {
@@ -31,10 +31,13 @@ export default function Buyers(route: Props) {
     onSubmitDelete,
     onSubmitCancel,
     onSubmitConfirm,
+    onSubmitCreate,
+    isConnected,
   } = useBuyers(route);
   return (
     <View style={styles.container}>
       <Header title={t('company.companyBuyerList')} showBack={true} />
+      <Filter onHandlerCreate={onSubmitCreate} />
       {loading ? (
         <Activity style={styles.activityIndicator} />
       ) : seller.length === 0 ? (
@@ -43,35 +46,40 @@ export default function Buyers(route: Props) {
         </View>
       ) : (
         <>
-         <Filter />
-          <VerticalFlatList
-            data={seller}
-            gap={10}
-            columns={1}
-            keyExtractor={company => String(company?.id ?? '')}
-            onEndReached={() => loadMore()}
-            onEndReachedThreshold={0.3}
-            ListFooterComponent={
-              loadingMore ? (
-                <Activity style={styles.footerLoading} />
-              ) : !hasNextPage && seller.length > 0 ? (
-                <Text style={styles.footerText}>No more data</Text>
-              ) : null
-            }
-            renderItem={({item: company}: {item: AllCompanyProps}) => (
-              <Table
-                containerStyle={styles.tableContainer}
-                onClickHistory={() =>
-                  onHandlerHistory(company.id, company.name)
-                }
-                onClickEdit={() => console.log()}
-                onClickDelete={() => onSubmitDelete(company.id)}
-                permission={routeItem?.items}
-                showDelete={company?.deleted}>
-                <Card key={company.id} element={company} />
-              </Table>
-            )}
-          />
+          {isConnected ? (
+            <VerticalFlatList
+              data={seller}
+              gap={10}
+              columns={1}
+              keyExtractor={company => String(company?.id ?? '')}
+              onEndReached={() => loadMore()}
+              onEndReachedThreshold={0.3}
+              ListFooterComponent={
+                loadingMore ? (
+                  <Activity style={styles.footerLoading} />
+                ) : !hasNextPage && seller.length > 0 ? (
+                  <Text style={styles.footerText}>No more data</Text>
+                ) : null
+              }
+              renderItem={({item: company}: {item: AllCompanyProps}) => (
+                <Table
+                  containerStyle={styles.tableContainer}
+                  onClickHistory={() =>
+                    onHandlerHistory(company.id, company.name)
+                  }
+                  onClickEdit={() => console.log()}
+                  onClickDelete={() => onSubmitDelete(company.id)}
+                  permission={routeItem?.items}
+                  showDelete={company?.deleted}>
+                  <Card key={company.id} element={company} />
+                </Table>
+              )}
+            />
+          ) : (
+            <View style={styles.emptyContainer}>
+              <NotFound size={120} />
+            </View>
+          )}
         </>
       )}
       <DefaultModal
