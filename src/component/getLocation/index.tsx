@@ -1,111 +1,91 @@
-import React, {useCallback, useState} from 'react';
-import {
-  PermissionsAndroid,
-  Platform,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
-import Geolocation, {
-  type GeoError,
-  type GeoOptions,
-  type GeoPosition,
-} from 'react-native-geolocation-service';
-import Botton from '@/component/button';
+import {Alert, Linking, Platform} from 'react-native';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import Geolocation from 'react-native-geolocation-service';
+import {promptEnableGps} from '@/native/gpsEnabler';
 
-export type LocationCoords = {
-  latitude: number;
-  longitude: number;
-  accuracy?: number;
-};
+export async function ensureLocationPermission(): Promise<boolean> {
+  const permission =
+    Platform.OS === 'android'
+      ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
+      : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE;
 
-type Props = {
-  title?: string;
-  onLocation: (coords: LocationCoords, raw?: GeoPosition) => void;
-  onError?: (error: GeoError | Error) => void;
-  options?: GeoOptions;
-  style?: StyleProp<ViewStyle>;
-  disabled?: boolean;
-};
+  const status = await check(permission);
 
-async function ensureAndroidLocationPermission(): Promise<boolean> {
-  if (Platform.OS !== 'android') return true;
+  if (status === RESULTS.GRANTED) return true;
 
-  const fine = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
-  const coarse = PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION;
+  if (status === RESULTS.DENIED) {
+    const result = await request(permission);
+    return result === RESULTS.GRANTED;
+  }
 
-  const hasFine = await PermissionsAndroid.check(fine);
-  const hasCoarse = await PermissionsAndroid.check(coarse);
-  if (hasFine || hasCoarse) return true;
-
-  // Note: requestMultiple doesn't take a rationale object (unlike request()).
-  const result = await PermissionsAndroid.requestMultiple([fine, coarse]);
-
-  return (
-    result[fine] === PermissionsAndroid.RESULTS.GRANTED ||
-    result[coarse] === PermissionsAndroid.RESULTS.GRANTED
-  );
+  return false; // BLOCKED / UNAVAILABLE
 }
 
-export default function GetLocationButton({
-  title = 'Get location',
-  onLocation,
-  onError,
-  options,
-  style,
-  disabled,
-}: Props) {
-  const [loading, setLoading] = useState(false);
 
-  const onPress = useCallback(async () => {
-    if (disabled || loading) return;
+export function getSafeCurrentLocation(
+  onSuccess: (coords: {latitude: number; longitude: number; accuracy?: number}) => void,
+  onError?: (e: unknown) => void,
+) {
+  Geolocation.getCurrentPosition(
+    pos => {
+      onSuccess({
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+        accuracy: pos.coords.accuracy,
+      });
+    },
+    err => {
+      /**
+       * code === 2  → GPS خاموش یا provider در دسترس نیست
+       * (روی بعضی deviceها تنها راه تشخیص همینه)
+       */
+      if (Platform.OS === 'android' && err.code === 2) {
+        // First: show the real system dialog (Google Play Services resolution UI)
+        promptEnableGps()
+          .then(enabled => {
+            if (enabled) {
+              // Retry once after user enables GPS
+              Geolocation.getCurrentPosition(
+                pos => {
+                  onSuccess({
+                    latitude: pos.coords.latitude,
+                    longitude: pos.coords.longitude,
+                    accuracy: pos.coords.accuracy,
+                  });
+                },
+                retryErr => onError?.(retryErr),
+                {
+                  enableHighAccuracy: true,
+                  timeout: 15000,
+                  maximumAge: 10000,
+                },
+              );
+              return;
+            }
 
-    try {
-      setLoading(true);
-      const allowed = await ensureAndroidLocationPermission();
-      if (!allowed) {
-        throw new Error('Location permission denied');
+            // Fallback: open Location settings screen
+            Alert.alert(
+              'Location is off',
+              'لطفاً Location (GPS) دستگاه را روشن کنید',
+              [
+                {text: 'لغو', style: 'cancel'},
+                {
+                  text: 'تنظیمات',
+                  onPress: () => Linking.sendIntent?.('android.settings.LOCATION_SOURCE_SETTINGS'),
+                },
+              ],
+            );
+          })
+          .catch(e => onError?.(e));
+        return;
       }
 
-      Geolocation.getCurrentPosition(
-        (pos: GeoPosition) => {
-          setLoading(false);
-          onLocation(
-            {
-              latitude: pos.coords.latitude,
-              longitude: pos.coords.longitude,
-              accuracy: pos.coords.accuracy,
-            },
-            pos,
-          );
-        },
-        (err: GeoError) => {
-          setLoading(false);
-          onError?.(err);
-        },
-        {
-          enableHighAccuracy: true,
-          // Android: if Location (GPS) is OFF, show the system dialog to turn it ON
-          showLocationDialog: true,
-          forceRequestLocation: true,
-          timeout: 15000,
-          maximumAge: 10000,
-          ...options,
-        },
-      );
-    } catch (e) {
-      setLoading(false);
-      onError?.(e as Error);
-    }
-  }, [disabled, loading, onError, onLocation, options]);
-
-  return (
-    <Botton
-      title={title}
-      onHandler={onPress}
-      loading={loading}
-      disabled={disabled || loading}
-      style={style}
-    />
+      onError?.(err);
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 10000,
+    },
   );
 }
-

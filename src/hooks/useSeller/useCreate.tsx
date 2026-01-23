@@ -11,6 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import useCompanyGroupStore from '@/zustland/companyGroup';
 import { CompanyGroupParamList, DropdownOptions } from '@/navigation/types';
 import useRefetchOnReconnect from '../useRefetchOnReconnect';
+import { ensureLocationPermission, getSafeCurrentLocation } from '@/component/getLocation';
 
 export default function useSellerCreate() {
   const isConnected = useNetworkStore(s => s.isConnected);
@@ -116,6 +117,27 @@ export default function useSellerCreate() {
     });
   }, [isConnected, show, setCompanyGroup]);
 
+
+
+ // get location //
+  const onPressGetLocation = async () => {
+    const hasPermission = await ensureLocationPermission();
+
+    if (!hasPermission) {
+      show('Permission required', {type: 'error'});
+      return;
+    }
+
+    getSafeCurrentLocation(
+      coords => {
+        console.log('CORRECT LOCATION:', coords);
+      },
+       () => {
+        show('Failed to get location', {type: 'error'});
+      },
+    );
+  };
+
   useFocusEffect(
     useCallback(() => {
       getCompanyGroup();
@@ -137,6 +159,7 @@ export default function useSellerCreate() {
         onConfirmDate,
         companyGroupList,
         companyGroup,
-        isConnected
+        isConnected,
+        onPressGetLocation
     }
 }

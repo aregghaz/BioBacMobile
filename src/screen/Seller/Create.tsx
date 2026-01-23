@@ -12,10 +12,8 @@ import TouchableView from '@/component/view/TouchableView';
 import DateIcon from '@/component/icons/DateIcon';
 import moment from 'moment';
 import DropdownComponent from '@/component/dropdown';
-import GetLocationButton from '@/component/getLocation';
 export default function SellerCreate() {
-  const { control, handleSubmit, errors, onSubmit, onOpenDate, onclearDate, onCloseDate, date, showDate, onConfirmDate, companyGroupList, companyGroup, isConnected } = useSellerCreate();
-
+  const { control, handleSubmit, errors, onSubmit, onOpenDate, onclearDate, onCloseDate, date, showDate, onConfirmDate, companyGroupList, companyGroup, isConnected,onPressGetLocation } = useSellerCreate();
 
 
   return (
@@ -83,7 +81,7 @@ export default function SellerCreate() {
             />
           )}
         />
-    <TextView title="Company Group" style={styles.marginTop} />
+        <TextView title="Company Group" style={styles.marginTop} />
         <Controller
           control={control}
           name="companyGroup"
@@ -136,7 +134,7 @@ export default function SellerCreate() {
           onBlur={showDate}
           icon={<DateIcon size={24} color={Colors.black} />}
         />
-    
+
         <Calender
           isVisible={showDate}
           onClose={() => onCloseDate()}
@@ -147,7 +145,7 @@ export default function SellerCreate() {
               : undefined
           }
         />
-           <TextView title="Latitude" style={styles.marginTop} />
+        <TextView title="Latitude" style={styles.marginTop} />
         <Controller
           control={control}
           name="latitude"
@@ -163,7 +161,7 @@ export default function SellerCreate() {
             />
           )}
         />
-           <TextView title="Longitude" style={styles.marginTop} />
+        <TextView title="Longitude" style={styles.marginTop} />
         <Controller
           control={control}
           name="latitude"
@@ -179,7 +177,7 @@ export default function SellerCreate() {
             />
           )}
         />
-        <GetLocationButton onLocation={(e)=>console.log(e,'location')} onError={(e)=>console.log(e,'error')} />
+        <Botton title="Get Location" onHandler={onPressGetLocation} style={styles.locationButton} textStyle={styles.locationButtonText} />
         <Botton title="Create" onHandler={handleSubmit(onSubmit)} style={styles.button} />
       </ScrollView>
     </View>
@@ -197,13 +195,22 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    marginTop: '10%',
+    marginTop: '5%',
   },
   scrollView: {
     flexGrow: 1,
     paddingBottom: 20,
   },
-  locationButton:{
-    width: '45%',
-  }
+  locationButton: {
+    width: '35%',
+    backgroundColor: Colors.white,
+    borderColor: Colors.blue,
+    borderWidth: 2,
+    marginTop: '5%',
+    alignSelf: 'flex-start',
+    marginLeft: '4%',
+  },
+  locationButtonText: {
+    color: Colors.blue,
+  },
 });
