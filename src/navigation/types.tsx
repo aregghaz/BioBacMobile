@@ -32,15 +32,7 @@ export type TabParamList = {
 };
 
 
-export type DraftParamList = {
-  accountId: number,
-  category: string,
-  date: string;
-  notes: string,
-  paymentCategoryId: number,
-  sum: number,
-  targetId: number,
-};
+
 
 
 export type CompanyGroupParamList = {

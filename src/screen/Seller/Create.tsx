@@ -14,11 +14,11 @@ import moment from 'moment';
 import DropdownComponent from '@/component/dropdown';
 import MapModal from '@/component/Modal/MapModal';
 export default function SellerCreate() {
-  const { control, handleSubmit, errors, onSubmit, onOpenDate,
+  const { control, handleSubmit, errors, onOpenDate,
     onclearDate, onCloseDate, date, showDate, onConfirmDate, companyGroupList,
-     companyGroup, isConnected, onPressGetLocation, showMap,onCloseMap,onSubmitMap,latitude,longitude } = useSellerCreate();
-
-  return (
+    companyGroup, isConnected, onPressGetLocation, showMap, onCloseMap, onSubmitMap, latitude, longitude, setLatitude, setLongitude, onCreateCompany, errorDate } = useSellerCreate();
+ 
+    return (
     <View style={styles.container}>
       <CustomHeader title={'Company Information'} showBack={true} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
@@ -48,7 +48,7 @@ export default function SellerCreate() {
               inputSize="medium"
               onChangeText={onChange}
               value={value}
-              errorMessage={errors.companyName?.message}
+              errorMessage={errors.generalDirector?.message}
             />
           )}
         />
@@ -68,10 +68,10 @@ export default function SellerCreate() {
             />
           )}
         />
-        <TextView title="Company Address" style={styles.marginTop} />
+        <TextView title="Actual Address" style={styles.marginTop} />
         <Controller
           control={control}
-          name="companyAddress"
+          name="actualAddress"
           render={({ field: { onChange, value } }) => (
             <TextInput
               placeholder="..."
@@ -79,10 +79,59 @@ export default function SellerCreate() {
               inputSize="medium"
               onChangeText={onChange}
               value={value}
-              errorMessage={errors.companyAddress?.message}
+              errorMessage={errors.actualAddress?.message}
             />
           )}
         />
+
+        <TextView title="Point of Sale Address" style={styles.marginTop} />
+        <Controller
+          control={control}
+          name="addressTT"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              placeholder="..."
+              containerStyle={styles.marginTop}
+              inputSize="medium"
+              onChangeText={onChange}
+              value={value}
+              errorMessage={errors.addressTT?.message}
+            />
+          )}
+        />
+
+        <TextView title="Legal Address" style={styles.marginTop} />
+        <Controller
+          control={control}
+          name="localAddress"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              placeholder="..."
+              containerStyle={styles.marginTop}
+              inputSize="medium"
+              onChangeText={onChange}
+              value={value}
+              errorMessage={errors.localAddress?.message}
+            />
+          )}
+        />
+
+        <TextView title="Warehouse Address" style={styles.marginTop} />
+        <Controller
+          control={control}
+          name="warehouseAddress"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              placeholder="..."
+              containerStyle={styles.marginTop}
+              inputSize="medium"
+              onChangeText={onChange}
+              value={value}
+              errorMessage={errors.warehouseAddress?.message}
+            />
+          )}
+        />
+
         <TextView title="Company Group" style={styles.marginTop} />
         <Controller
           control={control}
@@ -108,7 +157,6 @@ export default function SellerCreate() {
               onChangeText={onChange}
               keyboard="numeric"
               value={value}
-              errorMessage={errors.creditorAmount?.message}
             />
           )}
         />
@@ -123,7 +171,6 @@ export default function SellerCreate() {
               onChangeText={onChange}
               keyboard="numeric"
               value={value}
-              errorMessage={errors.debtorAmount?.message}
             />
           )}
         />
@@ -135,6 +182,7 @@ export default function SellerCreate() {
           onClose={onclearDate}
           onBlur={showDate}
           icon={<DateIcon size={24} color={Colors.black} />}
+          errorMessage={errorDate}
         />
 
         <Calender
@@ -148,30 +196,27 @@ export default function SellerCreate() {
           }
         />
         <TextView title="Latitude" style={styles.marginTop} />
-  
-            <TextInput
-              containerStyle={styles.marginTop}
-              placeholder="..."
-              inputSize="medium"
-              onChangeText={(text) => console.log(text)}
-              keyboard="numeric"
-              value={latitude}
-              errorMessage={errors.latitude?.message}
-            />
-     
+        <TextInput
+          containerStyle={styles.marginTop}
+          placeholder="..."
+          inputSize="medium"
+          onChangeText={(text) => setLatitude(text)}
+          keyboard="numeric"
+          value={latitude}
+        />
+
         <TextView title="Longitude" style={styles.marginTop} />
-            <TextInput
-              containerStyle={styles.marginTop}
-              placeholder="..."
-              inputSize="medium"
-              onChangeText={(text) => console.log(text)}
-              keyboard="numeric"
-              value={longitude}
-              errorMessage={errors.longitude?.message}
-            />
+        <TextInput
+          containerStyle={styles.marginTop}
+          placeholder="..."
+          inputSize="medium"
+          onChangeText={(text) => setLongitude(text)}
+          keyboard="numeric"
+          value={longitude}
+        />
 
         <Botton title="Show Map" onHandler={onPressGetLocation} style={styles.locationButton} textStyle={styles.locationButtonText} />
-        <Botton title="Create" onHandler={handleSubmit(onSubmit)} style={styles.button} />
+        <Botton title="Create" onHandler={handleSubmit(onCreateCompany)} style={styles.button} />
         <MapModal isVisible={showMap} onClose={() => onCloseMap()} onSubmit={(latitude, longitude) => onSubmitMap(latitude, longitude)} />
       </ScrollView>
     </View>
