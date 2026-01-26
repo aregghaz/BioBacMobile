@@ -3,6 +3,11 @@ import useDraftStore from '@/zustland/draftStore';
 
 export default function useDraft() {
     const { Draft } =  useDraftStore();
-    console.log(Draft);
-  return{}
+
+// submit delete
+const onSubmitDelete = (id: number) => {
+    console.log(id);
+}
+
+  return{Draft, onSubmitDelete}
 }

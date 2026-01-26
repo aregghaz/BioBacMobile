@@ -6,8 +6,6 @@ import {
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {GetAllCompanies} from '@/services/Company/AllCompanies';
-import {refreshTokenService} from '@/services/AuthService/RefreshToken';
-import useAuthStore from '@/zustland/authStore';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {DeleteCompany} from '@/services/Company/DeleteCompany';
 import {useToast} from '@/component/toast/ToastProvider';
@@ -22,7 +20,6 @@ export default function useBuyers(route: Props) {
   const [loading, setLoading] = useState(false);
   const isConnected = useNetworkStore(s => s.isConnected);
   const [loadingMore, setLoadingMore] = useState(false);
-  const {refreshToken} = useAuthStore();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [seller, setSeller] = useState<AllCompanyProps[]>([]);
@@ -32,17 +29,7 @@ export default function useBuyers(route: Props) {
   const [visible, setVisible] = useState(false);
   const [id, setId] = useState<number>(0);
 
-  // refresh token //
-  const onSubmitRefreshToken = useCallback(() => {
-    refreshTokenService(refreshToken, {
-      onSuccess: () => {
-        getAllCompaniesRef.current();
-      },
-      onError: () => {
-        setLoading(false);
-      },
-    });
-  }, [refreshToken]);
+
 
   // get seller data //
   const getAllCompanies = useCallback(() => {
@@ -76,14 +63,13 @@ export default function useBuyers(route: Props) {
         setLoadingMore(false);
       },
       onUnauthorized: () => {
-        onSubmitRefreshToken();
       },
       onError: () => {
         setLoading(false);
         setLoadingMore(false);
       },
     });
-  }, [page, onSubmitRefreshToken, isConnected]);
+  }, [page, isConnected]);
 
   // load more data //
   const loadMore = useCallback(() => {
@@ -115,7 +101,6 @@ export default function useBuyers(route: Props) {
         getAllCompanies();
       },
       onUnauthorized: () => {
-        onSubmitRefreshToken();
       },
       onError: () => {
         show('Failed to delete company', {type: 'error'});

@@ -56,6 +56,7 @@ export default function useHome() {
               items: g.items, // <-- permissions
             };
           });
+          console.log('groupsData',groupsData);
           setGroupsStore(groupsData as unknown as HomeListProps[]);
           setGroups(groupsData as unknown as HomeListProps[]);
           setProfile(data);

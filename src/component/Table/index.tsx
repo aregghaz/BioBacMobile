@@ -17,9 +17,9 @@ type Props = {
 };
 
 enum UserPermission {
-  CREATE = 'COMPANY_BUYER_CREATE',
-  UPDATE = 'COMPANY_BUYER_UPDATE',
-  DELETE = 'COMPANY_BUYER_DELETE',
+  CREATE = 'COMPANY_SELLER_CREATE',
+  UPDATE = 'COMPANY_SELLER_UPDATE',
+  DELETE = 'COMPANY_SELLER_DELETE',
 }
 
 export default function Table({
