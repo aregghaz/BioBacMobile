@@ -1,24 +1,25 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {RootStackParamList} from '@/navigation/types';
+import {BuyerParamList, RootStackParamList} from '@/navigation/types';
 import {AllCompanyProps, HomeListProps} from '@/types';
 import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
 import {GetAllCompanies} from '@/services/Company/AllCompanies';
-import {refreshTokenService} from '@/services/AuthService/RefreshToken';
-import useAuthStore from '@/zustland/authStore';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {DeleteCompany} from '@/services/Company/DeleteCompany';
 import {useToast} from '@/component/toast/ToastProvider';
-type Props = NativeStackScreenProps<RootStackParamList, 'Buyers'>;
+import useRefetchOnReconnect from '../useRefetchOnReconnect';
+import useNetworkStore from '@/zustland/networkStore';
+
+type Props = NativeStackScreenProps<BuyerParamList, 'Buyers'>;
 
 export default function useBuyers(route: Props) {
   const {item} = route.route.params;
   const {show} = useToast();
   const [loading, setLoading] = useState(false);
+  const isConnected = useNetworkStore(s => s.isConnected);
   const [loadingMore, setLoadingMore] = useState(false);
-  const {refreshToken} = useAuthStore();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [seller, setSeller] = useState<AllCompanyProps[]>([]);
@@ -28,20 +29,14 @@ export default function useBuyers(route: Props) {
   const [visible, setVisible] = useState(false);
   const [id, setId] = useState<number>(0);
 
-  // refresh token //
-  const onSubmitRefreshToken = useCallback(() => {
-    refreshTokenService(refreshToken, {
-      onSuccess: () => {
-        getAllCompaniesRef.current();
-      },
-      onError: () => {
-        setLoading(false);
-      },
-    });
-  }, [refreshToken]);
+
 
   // get seller data //
   const getAllCompanies = useCallback(() => {
+    if (!isConnected) {
+      setLoading(false);
+      return;
+    }
     if (page === 0) {
       setLoading(true);
     } else {
@@ -68,14 +63,13 @@ export default function useBuyers(route: Props) {
         setLoadingMore(false);
       },
       onUnauthorized: () => {
-        onSubmitRefreshToken();
       },
       onError: () => {
         setLoading(false);
         setLoadingMore(false);
       },
     });
-  }, [page, onSubmitRefreshToken]);
+  }, [page, isConnected]);
 
   // load more data //
   const loadMore = useCallback(() => {
@@ -87,7 +81,10 @@ export default function useBuyers(route: Props) {
 
   // navigate to history //
   const onHandlerHistory = (id: number, name: string) => {
-    navigation.navigate('HistoryBuyers', {item: {id: id, name: name}});
+    navigation.navigate('BuyerStack', {
+      screen: 'HistoryBuyers',
+      params: {item: {id: id, name: name}},
+    });
   };
 
   // submit delete //
@@ -104,7 +101,6 @@ export default function useBuyers(route: Props) {
         getAllCompanies();
       },
       onUnauthorized: () => {
-        onSubmitRefreshToken();
       },
       onError: () => {
         show('Failed to delete company', {type: 'error'});
@@ -118,6 +114,13 @@ export default function useBuyers(route: Props) {
     setVisible(() => false);
   };
 
+  // submit create buyer //
+  const onSubmitCreate = () => {
+    navigation.navigate('BuyerStack', {
+      screen: 'BuyerCreate',
+    });
+  };
+
   useEffect(() => {
     getAllCompaniesRef.current = getAllCompanies;
   }, [getAllCompanies]);
@@ -128,6 +131,9 @@ export default function useBuyers(route: Props) {
       getAllCompanies();
     }, [getAllCompanies])
   );
+
+  useRefetchOnReconnect(getAllCompanies);
+
   return {
     item: item as HomeListProps,
     loading,
@@ -140,5 +146,7 @@ export default function useBuyers(route: Props) {
     visible,
     onSubmitDelete,
     onSubmitCancel,
+    onSubmitCreate,
+    isConnected,
   };
 }

@@ -1,6 +1,6 @@
 import {View, StyleSheet} from 'react-native';
 import React from 'react';
-import {RootStackParamList} from '@/navigation/types';
+import {BuyerParamList} from '@/navigation/types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import useHistory from '@/hooks/useBuyers/useHistory';
 import {Colors} from '@/theme';
@@ -12,7 +12,7 @@ import {deviceHeight} from '@/helper';
 import {getHistoryProps} from '@/types';
 import HistoryCard from './_component/HistoryCard';
 import NotFound from '@/component/icons/NotFound';
-type Props = NativeStackScreenProps<RootStackParamList, 'HistoryBuyers'>;
+type Props = NativeStackScreenProps<BuyerParamList, 'HistoryBuyers'>;
 export default function HistoryBuyers(route: Props) {
  const {name, loading, loadingMore, history, loadMore} = useHistory(route);
   return (

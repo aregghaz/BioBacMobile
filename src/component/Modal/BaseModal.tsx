@@ -2,7 +2,7 @@ import {Modal, StyleSheet, TouchableOpacity } from 'react-native';
 import React from 'react';
 interface ModalCardProps {
   isVisible: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   children: React.ReactNode;
 }
 

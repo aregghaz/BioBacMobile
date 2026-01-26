@@ -29,7 +29,7 @@ export default function AppNavigation() {
         style={styles.container}
         >
           {isConnected === false && <OfflineBanner /> }
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle="dark-content" />
         <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown: false ,gestureEnabled: false}}>
             <Stack.Screen name="Splash" component={Splash}/>

@@ -7,6 +7,7 @@ import useNetworkStore from '@/zustland/networkStore';
 import {GetAllPermissions} from '@/services/Permissions/GetPermissions';
 import {GetAllPermissionsResponse} from '@/types';
 import usePermissionStore from '@/zustland/permissionStore';
+import {refreshTokenOnce} from '@/services/AuthService/refreshTokenOnce';
 export default function useSplash() {
   const {isLoggedIn} = useAuthStore();
   const navigation =
@@ -22,7 +23,12 @@ export default function useSplash() {
         navigation.reset({index: 0, routes: [{name: 'Tabs'}]});
       },
       onError: () => {},
-    });
+      onUnauthorized: () => {
+        refreshTokenOnce().then(() => {
+          getAllPermissions();
+        });
+      }
+    })
   }, [setPermissions, navigation]);
 
   useEffect(() => {

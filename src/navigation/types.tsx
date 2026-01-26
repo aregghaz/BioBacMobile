@@ -10,19 +10,24 @@ export type SellerParamList = {
   SellerCreate: undefined;
 };
 
+export type BuyerParamList = {
+  Buyers: {item: HomeListProps};
+  HistoryBuyers: {item: historyProps};
+  BuyerCreate: undefined;
+};
+
 
 export type RootStackParamList = {
   Splash: undefined;
   SignIn: undefined;
   Tabs: undefined;
   Home: undefined;
-  Buyers: {item: HomeListProps};
-  HistoryBuyers: {item: historyProps};
   Payment: undefined;
   Settings: undefined;
   PaymentHistory: undefined;
   Draft: undefined;
   SellerStack: NavigatorScreenParams<SellerParamList> | undefined;
+  BuyerStack: NavigatorScreenParams<BuyerParamList> | undefined;
 };
 
 export type TabParamList = {
@@ -32,15 +37,7 @@ export type TabParamList = {
 };
 
 
-export type DraftParamList = {
-  accountId: number,
-  category: string,
-  date: string;
-  notes: string,
-  paymentCategoryId: number,
-  sum: number,
-  targetId: number,
-};
+
 
 
 export type CompanyGroupParamList = {

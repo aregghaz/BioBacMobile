@@ -13,9 +13,8 @@ export const refreshTokenService = async <T extends object>(
     config: {
       method: 'POST',
       url: endpoints.RefreshToken,
-  
-      transformRequest: [(data) => data],
-      data: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiaW9iYWNhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE3Njc3Nzk4NjF9.cFP5ulLU1Vj7r3VXNyNDJWdUhTDvQ2j2jkXPv-rGRUo',
+      transformRequest: [data => data],
+      data: refreshToken,
     },
     callbacks: result,
   });

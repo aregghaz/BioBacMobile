@@ -1,9 +1,9 @@
-import { View, StyleSheet, ScrollView } from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import React from 'react';
-import { Colors } from '@/theme';
-import { Controller } from 'react-hook-form';
+import {Colors} from '@/theme';
+import {Controller} from 'react-hook-form';
 import TextView from '@/component/view/TextView';
-import useSellerCreate from '@/hooks/useSeller/useCreate';
+import useBuyerCreate from '@/hooks/useBuyers/useCreate';
 import TextInput from '@/component/input/TextInput';
 import Botton from '@/component/button';
 import CustomHeader from '@/navigation/Header';
@@ -13,20 +13,44 @@ import DateIcon from '@/component/icons/DateIcon';
 import moment from 'moment';
 import DropdownComponent from '@/component/dropdown';
 import MapModal from '@/component/Modal/MapModal';
-export default function SellerCreate() {
-  const { control, handleSubmit, errors, onOpenDate,
-    onclearDate, onCloseDate, date, showDate, onConfirmDate, companyGroupList,
-    companyGroup, isConnected, onPressGetLocation, showMap, onCloseMap, onSubmitMap, latitude, longitude, setLatitude, setLongitude, onCreateCompany, errorDate } = useSellerCreate();
- 
-    return (
+
+export default function BuyerCreate() {
+  const {
+    control,
+    handleSubmit,
+    errors,
+    onOpenDate,
+    onclearDate,
+    onCloseDate,
+    date,
+    showDate,
+    onConfirmDate,
+    companyGroupList,
+    companyGroup,
+    isConnected,
+    onPressGetLocation,
+    showMap,
+    onCloseMap,
+    onSubmitMap,
+    latitude,
+    longitude,
+    setLatitude,
+    setLongitude,
+    onCreateCompany,
+    errorDate,
+  } = useBuyerCreate();
+
+  return (
     <View style={styles.container}>
       <CustomHeader title={'Company Information'} showBack={true} />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollView}>
         <TextView title="Company Name" style={styles.marginTop} />
         <Controller
           control={control}
           name="companyName"
-          render={({ field: { onChange, value } }) => (
+          render={({field: {onChange, value}}) => (
             <TextInput
               placeholder="..."
               containerStyle={styles.marginTop}
@@ -37,11 +61,12 @@ export default function SellerCreate() {
             />
           )}
         />
+
         <TextView title="General Director" style={styles.marginTop} />
         <Controller
           control={control}
           name="generalDirector"
-          render={({ field: { onChange, value } }) => (
+          render={({field: {onChange, value}}) => (
             <TextInput
               placeholder="..."
               containerStyle={styles.marginTop}
@@ -52,11 +77,12 @@ export default function SellerCreate() {
             />
           )}
         />
+
         <TextView title="Company Phone" style={styles.marginTop} />
         <Controller
           control={control}
           name="companyPhone"
-          render={({ field: { onChange, value } }) => (
+          render={({field: {onChange, value}}) => (
             <TextInput
               placeholder="..."
               containerStyle={styles.marginTop}
@@ -68,11 +94,12 @@ export default function SellerCreate() {
             />
           )}
         />
+
         <TextView title="Actual Address" style={styles.marginTop} />
         <Controller
           control={control}
           name="actualAddress"
-          render={({ field: { onChange, value } }) => (
+          render={({field: {onChange, value}}) => (
             <TextInput
               placeholder="..."
               containerStyle={styles.marginTop}
@@ -88,7 +115,7 @@ export default function SellerCreate() {
         <Controller
           control={control}
           name="addressTT"
-          render={({ field: { onChange, value } }) => (
+          render={({field: {onChange, value}}) => (
             <TextInput
               placeholder="..."
               containerStyle={styles.marginTop}
@@ -104,7 +131,7 @@ export default function SellerCreate() {
         <Controller
           control={control}
           name="localAddress"
-          render={({ field: { onChange, value } }) => (
+          render={({field: {onChange, value}}) => (
             <TextInput
               placeholder="..."
               containerStyle={styles.marginTop}
@@ -120,7 +147,7 @@ export default function SellerCreate() {
         <Controller
           control={control}
           name="warehouseAddress"
-          render={({ field: { onChange, value } }) => (
+          render={({field: {onChange, value}}) => (
             <TextInput
               placeholder="..."
               containerStyle={styles.marginTop}
@@ -136,21 +163,22 @@ export default function SellerCreate() {
         <Controller
           control={control}
           name="companyGroup"
-          render={({ field: { onChange, value: accountValue } }) => (
+          render={({field: {onChange, value: accountValue}}) => (
             <DropdownComponent
               style={styles.marginTop}
               data={isConnected ? companyGroupList : companyGroup}
               value={accountValue}
-              onClick={({ value }) => onChange(value)}
+              onClick={({value}) => onChange(value)}
               errorMessage={errors.companyGroup?.message}
             />
           )}
         />
+
         <TextView title="Creditor amount" style={styles.marginTop} />
         <Controller
           control={control}
           name="creditorAmount"
-          render={({ field: { onChange, value } }) => (
+          render={({field: {onChange, value}}) => (
             <TextInput
               containerStyle={styles.marginTop}
               inputSize="medium"
@@ -160,11 +188,12 @@ export default function SellerCreate() {
             />
           )}
         />
+
         <TextView title="Debtor amount" style={styles.marginTop} />
         <Controller
           control={control}
           name="debtorAmount"
-          render={({ field: { onChange, value } }) => (
+          render={({field: {onChange, value}}) => (
             <TextInput
               containerStyle={styles.marginTop}
               inputSize="medium"
@@ -174,6 +203,7 @@ export default function SellerCreate() {
             />
           )}
         />
+
         <TextView title="Date" style={styles.marginTop} />
         <TouchableView
           title={date}
@@ -195,12 +225,13 @@ export default function SellerCreate() {
               : undefined
           }
         />
+
         <TextView title="Latitude" style={styles.marginTop} />
         <TextInput
           containerStyle={styles.marginTop}
           placeholder="..."
           inputSize="medium"
-          onChangeText={(text) => setLatitude(text)}
+          onChangeText={text => setLatitude(text)}
           keyboard="numeric"
           value={latitude}
         />
@@ -210,17 +241,30 @@ export default function SellerCreate() {
           containerStyle={styles.marginTop}
           placeholder="..."
           inputSize="medium"
-          onChangeText={(text) => setLongitude(text)}
+          onChangeText={text => setLongitude(text)}
           keyboard="numeric"
           value={longitude}
         />
 
-        <Botton title="Show Map" onHandler={onPressGetLocation} style={styles.locationButton} textStyle={styles.locationButtonText} />
-        <Botton title="Create" onHandler={handleSubmit(onCreateCompany)} style={styles.button} />
-        <MapModal isVisible={showMap} onClose={() => onCloseMap()} onSubmit={(latitude, longitude) => onSubmitMap(latitude, longitude)} />
+        <Botton
+          title="Show Map"
+          onHandler={onPressGetLocation}
+          style={styles.locationButton}
+          textStyle={styles.locationButtonText}
+        />
+        <Botton
+          title="Create"
+          onHandler={handleSubmit(onCreateCompany)}
+          style={styles.button}
+        />
+        <MapModal
+          isVisible={showMap}
+          onClose={() => onCloseMap()}
+          onSubmit={(lat, lng) => onSubmitMap(lat, lng)}
+        />
       </ScrollView>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -228,11 +272,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-
   marginTop: {
     marginTop: 10,
   },
-
   button: {
     marginTop: '5%',
   },
@@ -260,3 +302,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+

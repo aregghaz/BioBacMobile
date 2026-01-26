@@ -11,12 +11,15 @@ import useAuthStore from '@/zustland/authStore';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {DeleteCompany} from '@/services/Company/DeleteCompany';
 import { useToast } from '@/component/toast/ToastProvider';
+import useRefetchOnReconnect from '../useRefetchOnReconnect';
+import useNetworkStore from '@/zustland/networkStore';
 type Props = NativeStackScreenProps<SellerParamList, 'Seller'>;
 
 export default function useSeller(route: Props) {
   const {item} = route.route.params;
   const {show} = useToast();
   const [loading, setLoading] = useState(false);
+  const isConnected = useNetworkStore(s => s.isConnected);
   const [loadingMore, setLoadingMore] = useState(false);
   const {refreshToken} = useAuthStore();
   const navigation =
@@ -42,6 +45,10 @@ export default function useSeller(route: Props) {
 
   // get seller data //
   const getAllCompanies = useCallback(() => {
+    if (!isConnected) {
+      setLoading(false);
+      return;
+    }
     if (page === 0) {
       setLoading(true);
     } else {
@@ -53,7 +60,7 @@ export default function useSeller(route: Props) {
         const {metadata} = payload as unknown as {
           metadata: {page: number; last: boolean; totalPages: number};
         };
-
+        console.log('getAllCompanies', data);
         // page=0 -> replace, page>0 -> append
         setSeller(prev => (page === 0 ? data : [...prev, ...data]));
 
@@ -76,7 +83,7 @@ export default function useSeller(route: Props) {
         console.log('GetAllCompanies error', {status, error});
       },
     });
-  }, [page, onSubmitRefreshToken]);
+  }, [page, onSubmitRefreshToken, isConnected]);
 
   // load more data //
   const loadMore = useCallback(() => {
@@ -142,6 +149,9 @@ export default function useSeller(route: Props) {
     }, [getAllCompanies])
   );
 
+  useRefetchOnReconnect(getAllCompanies);
+
+
   return {
     item: item as HomeListProps,
     loading,
@@ -155,5 +165,6 @@ export default function useSeller(route: Props) {
     onSubmitDelete,
     onSubmitCancel,
     onSubmitCreate,
+    isConnected,
   };
 }

@@ -183,3 +183,23 @@ export type GetPaymentAllResponse = {
     username: string;
 
 }
+
+export type CreateSellerRequest = {
+  name: string;
+  clientRegisteredDate: string;
+  ogrnDate: string;
+  ceo: string;
+  phones: string[];
+  emails?: string[];
+  typeIds: number[];
+  cooperationId: number;
+  companyGroupId: number;
+  longitude: string;
+  latitude: string;
+  creditorAmount?: number;
+  debtorAmount?: number;
+  actualAddress?: string;
+  addressTT?: string[];
+  localAddress?: string;
+  warehouseAddress?: string;
+}
